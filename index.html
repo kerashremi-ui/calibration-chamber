@@ -78,6 +78,11 @@
         #05080c;
     }
 
+    .brand-code {
+      font-size: 1.15rem;
+      letter-spacing: .08em;
+    }
+
     .status {
       color: var(--muted);
       font-size: .85rem;
@@ -116,6 +121,7 @@
     .glitch {
       color: var(--green);
       text-shadow: 0 0 14px rgba(99,255,90,.3);
+      letter-spacing: .05em;
     }
 
     .terminal {
@@ -314,10 +320,10 @@
     <header class="topbar">
       <div class="brand">
         <img class="logo" src="logo.png" onclick="findCoin('logo')" alt="Team_Aperture Logo" title="Team_Aperture" />
-        <div>TEAM_APERTURE // KALIBRIERUNGSKAMMER</div>
+        <div class="brand-code">GC-----</div>
       </div>
       <div>
-        <div class="status" id="status">Status: Archiv beschädigt</div>
+        <div class="status" id="status">Status: Testsubjekt eingeschlossen</div>
         <div class="coin-counter" id="coinCounter">Calibration Coins: 0 / 3</div>
       </div>
     </header>
@@ -325,20 +331,25 @@
     <main>
       <section id="intro" class="screen active">
         <h1>Die Kalibrierungskammer</h1>
-        <p class="glitch">TEAM_APERTURE FORMATIONSARCHIV // Zugriff teilweise wiederhergestellt</p>
+        <p class="glitch">WARNUNG // TESTSUBJEKT EINGESPERRT // FERNENTRIEGELUNG DEAKTIVIERT</p>
 
         <div class="terminal">
-          <p><strong>Status:</strong> teilweise beschädigt</p>
-          <p><strong>Testsubjekte:</strong> 2</p>
-          <p><strong>Ergebnis:</strong> Geocaching-Team entstanden</p>
-          <p><strong>Kuchenstatus:</strong> administrativ irrelevant</p>
+          <p><strong>Kammerstatus:</strong> verriegelt</p>
+          <p><strong>Testsubjekt:</strong> erfasst</p>
+          <p><strong>Freilassung:</strong> erst nach erfolgreicher Kalibrierung</p>
+          <p><strong>Alternative:</strong> bedauerlicherweise nicht vorgesehen</p>
         </div>
 
         <p>
-          Willkommen, Testsubjekt. Um das Formationsereignis von Team_Aperture zu rekonstruieren,
-          absolvieren Sie die Kalibrierungssequenz. Die Koordinaten werden freigegeben, sobald das
-          System davon überzeugt ist, dass Sie in der Lage sind, verdächtigen Anweisungen aus dem
-          Internet zu folgen.
+          Willkommen, Testsubjekt. Sobald Sie diese Seite geöffnet haben, wurde die Kalibrierungskammer aktiviert.
+          Die Tür ist verriegelt, die Steuerung ist launisch und die automatische Freigabe wurde aus Gründen
+          eingestellt, die für Sie nicht relevant sind.
+        </p>
+
+        <p>
+          Um die Anlage wieder verlassen zu dürfen, müssen Sie die Testsequenz absolvieren. Beobachten Sie Ihre
+          Umgebung, lösen Sie die Prüfungen und beweisen Sie, dass Sie wenigstens halbwegs in der Lage sind,
+          Anweisungen einer fragwürdigen Versuchsanlage zu befolgen.
         </p>
 
         <div class="actions">
@@ -477,7 +488,7 @@
       document.getElementById(id).classList.add('active');
 
       const status = document.getElementById('status');
-      if (id === 'intro') status.textContent = 'Status: Archiv beschädigt';
+      if (id === 'intro') status.textContent = 'Status: Testsubjekt eingeschlossen';
       if (id === 'chamber1') status.textContent = 'Status: Kammer 01 aktiv';
       if (id === 'placeholder') status.textContent = 'Status: Kammer 02 ausstehend';
     }
