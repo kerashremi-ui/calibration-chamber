@@ -1147,6 +1147,150 @@
     }
   </style>
 
+
+  <style>
+    .jigsaw-shell {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+      margin-top: 18px;
+      overflow: hidden;
+    }
+
+    .jigsaw-status {
+      border: 1px solid rgba(99,255,90,.25);
+      background: rgba(99,255,90,.045);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin: 14px 0;
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .jigsaw-area {
+      display: grid;
+      grid-template-columns: minmax(240px, .95fr) minmax(240px, 1.05fr);
+      gap: 16px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .jigsaw-board {
+      min-height: 330px;
+      border: 1px dashed rgba(99,255,90,.32);
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        rgba(0,0,0,.18);
+      background-size: 34px 34px;
+      position: relative;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .jigsaw-board::before {
+      content: "REKONSTRUKTIONSFLÄCHE";
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      color: rgba(255,255,255,.20);
+      font-size: .78rem;
+      letter-spacing: .08em;
+    }
+
+    .piece-tray {
+      min-height: 330px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,.025);
+      position: relative;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .puzzle-piece {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px 18px 12px 18px;
+      border: 1px solid rgba(255,255,255,.22);
+      background:
+        radial-gradient(circle at 18% 52%, rgba(255,75,53,.22), transparent 28%),
+        radial-gradient(circle at 78% 38%, rgba(99,255,90,.20), transparent 30%),
+        linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.025)),
+        #121820;
+      box-shadow: 0 10px 18px rgba(0,0,0,.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: bold;
+      cursor: grab;
+      user-select: none;
+      position: absolute;
+      touch-action: none;
+      transform: rotate(var(--rot, 0deg));
+    }
+
+    .puzzle-piece:active {
+      cursor: grabbing;
+      z-index: 50;
+      box-shadow: 0 16px 28px rgba(0,0,0,.34);
+    }
+
+    .jigsaw-interrupt {
+      border: 1px solid rgba(255,75,53,.34);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,75,53,.12), transparent 34%),
+        rgba(255,75,53,.045);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .jigsaw-interrupt h3 {
+      color: var(--red);
+      margin-top: 0;
+    }
+
+    .jigsaw-progressbar {
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .jigsaw-progressbar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(99,255,90,.40), rgba(255,75,53,.36));
+      transition: width 400ms ease;
+    }
+
+    @media (max-width: 720px) {
+      .jigsaw-area {
+        grid-template-columns: 1fr !important;
+      }
+
+      .jigsaw-board,
+      .piece-tray {
+        min-height: 260px !important;
+      }
+
+      .puzzle-piece {
+        width: 54px !important;
+        height: 54px !important;
+        font-size: .62rem !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -1646,18 +1790,60 @@
       </section>
 
       <section id="bonus1" class="screen">
-        <h2>Bonus B01 // Archivfehler</h2>
-        <div class="terminal">
-          <p><strong>Status:</strong> freigeschaltet, aber noch nicht rekonstruiert</p>
-          <p>
-            Diese Zusatzkammer wird später aktiviert. Die Anlage weist darauf hin, dass Bonusinhalte
-            grundsätzlich nicht existieren, bis sie plötzlich doch existieren.
-          </p>
+        <h2>Bonus B01 // 200 Teile später</h2>
+
+        <div id="b01Intro">
+          <div class="terminal">
+            <p><strong>BONUSPROTOKOLL B01 AKTIVIERT</strong></p>
+            <p>
+              Für die weitere Freigabe ist die Rekonstruktion eines hochkomplexen visuellen Datenfragments erforderlich.
+              Bitte setzen Sie alle <strong>200 Teile</strong> korrekt zusammen.
+            </p>
+            <p>
+              Geschätzte Bearbeitungszeit: unangenehm.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="startJigsaw()">Rekonstruktion starten</button>
+            <button onclick="showScreen('placeholder')">Zurück zum Systemkern</button>
+          </div>
         </div>
 
-        <div class="actions">
-          <button class="blue" onclick="showScreen('bonus2')">Weiter zu Bonus B02</button>
-          <button onclick="showScreen('placeholder')">Zurück zum Systemkern</button>
+        <div id="b01Game" class="jigsaw-shell" style="display:none;">
+          <div class="jigsaw-status" id="jigsawStatus">
+            Rekonstruktionsfortschritt: 0 / 200 Teile
+          </div>
+
+          <p class="rift-help">
+            Ziehen Sie die Fragmente auf die Rekonstruktionsfläche. Die Anlage behauptet, die Teile würden magnetisch einrasten.
+            Diese Behauptung wurde von der Anlage selbst überprüft und daher abgelehnt.
+          </p>
+
+          <div class="jigsaw-progressbar"><span id="jigsawProgress"></span></div>
+
+          <div class="jigsaw-area">
+            <div class="jigsaw-board" id="jigsawBoard"></div>
+            <div class="piece-tray" id="pieceTray"></div>
+          </div>
+
+          <div class="message-box" id="jigsawMessage">
+            Rekonstruktion läuft. Bitte bewahren Sie Ruhe und ignorieren Sie die Tatsache, dass dies sehr nach Jigidi riecht.
+          </div>
+
+          <div id="jigsawInterrupt" class="jigsaw-interrupt">
+            <h3>Rekonstruktion abgebrochen.</h3>
+            <p>
+              Das System hat 200-teilige Schiebepuzzles analysiert und ist zu dem Schluss gekommen:
+            </p>
+            <p><strong>Nein.</strong></p>
+            <p>
+              Bonus B02 wird geöffnet, weil Ihre Neugier bereits ausreichend bewiesen wurde.
+            </p>
+            <div class="actions">
+              <button class="blue" onclick="showScreen('bonus2')">Weiter zu Bonus B02</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2750,6 +2936,140 @@
       }
 
       showScreen('bonus1');
+    }
+
+
+    let jigsawStarted = false;
+    let jigsawInterrupted = false;
+    let jigsawProgress = 0;
+    let jigsawInterval = null;
+    let jigsawTimeout = null;
+    let draggedPiece = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    function startJigsaw() {
+      document.getElementById('b01Intro').style.display = 'none';
+      document.getElementById('b01Game').style.display = 'block';
+
+      jigsawStarted = true;
+      jigsawInterrupted = false;
+      jigsawProgress = 0;
+
+      document.getElementById('jigsawInterrupt').style.display = 'none';
+      document.getElementById('jigsawMessage').innerHTML = 'Rekonstruktion läuft. Bitte bewahren Sie Ruhe und ignorieren Sie die Tatsache, dass dies sehr nach Jigidi riecht.';
+
+      createJigsawPieces();
+      updateJigsawStatus();
+
+      if (jigsawInterval) clearInterval(jigsawInterval);
+      if (jigsawTimeout) clearTimeout(jigsawTimeout);
+
+      jigsawInterval = setInterval(() => {
+        if (jigsawInterrupted) return;
+        jigsawProgress = Math.min(35, jigsawProgress + Math.floor(Math.random() * 2));
+        updateJigsawStatus();
+
+        const messages = [
+          'Magnetische Einrastung wird simuliert. Simulation ist beleidigt.',
+          'Teil 37 scheint theoretisch zu passen. Praktisch weigert es sich.',
+          'Die Anlage berechnet, ob Puzzles Spaß machen. Ergebnis ausstehend.',
+          'Rekonstruktion weiterhin unnötig detailliert.'
+        ];
+
+        if (Math.random() > 0.58) {
+          document.getElementById('jigsawMessage').textContent = messages[Math.floor(Math.random() * messages.length)];
+        }
+      }, 1800);
+
+      jigsawTimeout = setTimeout(interruptJigsaw, 30000);
+    }
+
+    function createJigsawPieces() {
+      const tray = document.getElementById('pieceTray');
+      const board = document.getElementById('jigsawBoard');
+      tray.innerHTML = '';
+      board.querySelectorAll('.puzzle-piece').forEach(piece => piece.remove());
+
+      for (let i = 1; i <= 28; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'puzzle-piece';
+        piece.textContent = String(i).padStart(2, '0');
+        piece.style.left = (12 + Math.random() * 70) + '%';
+        piece.style.top = (10 + Math.random() * 72) + '%';
+        piece.style.setProperty('--rot', (Math.random() * 30 - 15).toFixed(1) + 'deg');
+
+        piece.addEventListener('pointerdown', startPieceDrag);
+        tray.appendChild(piece);
+      }
+    }
+
+    function startPieceDrag(event) {
+      if (jigsawInterrupted) return;
+
+      draggedPiece = event.currentTarget;
+      draggedPiece.setPointerCapture(event.pointerId);
+
+      const rect = draggedPiece.getBoundingClientRect();
+      dragOffsetX = event.clientX - rect.left;
+      dragOffsetY = event.clientY - rect.top;
+
+      document.addEventListener('pointermove', dragPiece);
+      document.addEventListener('pointerup', stopPieceDrag, { once: true });
+    }
+
+    function dragPiece(event) {
+      if (!draggedPiece) return;
+
+      const parent = draggedPiece.parentElement;
+      const parentRect = parent.getBoundingClientRect();
+      const x = event.clientX - parentRect.left - dragOffsetX;
+      const y = event.clientY - parentRect.top - dragOffsetY;
+
+      draggedPiece.style.left = Math.max(0, Math.min(parentRect.width - draggedPiece.offsetWidth, x)) + 'px';
+      draggedPiece.style.top = Math.max(0, Math.min(parentRect.height - draggedPiece.offsetHeight, y)) + 'px';
+    }
+
+    function stopPieceDrag(event) {
+      if (!draggedPiece) return;
+
+      const board = document.getElementById('jigsawBoard');
+      const boardRect = board.getBoundingClientRect();
+      const pieceRect = draggedPiece.getBoundingClientRect();
+
+      const centerX = pieceRect.left + pieceRect.width / 2;
+      const centerY = pieceRect.top + pieceRect.height / 2;
+
+      if (centerX >= boardRect.left && centerX <= boardRect.right && centerY >= boardRect.top && centerY <= boardRect.bottom) {
+        board.appendChild(draggedPiece);
+        draggedPiece.style.left = (centerX - boardRect.left - pieceRect.width / 2) + 'px';
+        draggedPiece.style.top = (centerY - boardRect.top - pieceRect.height / 2) + 'px';
+        jigsawProgress = Math.min(35, jigsawProgress + 1);
+        updateJigsawStatus();
+      }
+
+      document.removeEventListener('pointermove', dragPiece);
+      draggedPiece = null;
+    }
+
+    function updateJigsawStatus() {
+      const status = document.getElementById('jigsawStatus');
+      const bar = document.getElementById('jigsawProgress');
+      if (!status || !bar) return;
+
+      status.textContent = 'Rekonstruktionsfortschritt: ' + jigsawProgress + ' / 200 Teile';
+      bar.style.width = Math.min(100, (jigsawProgress / 200) * 100) + '%';
+    }
+
+    function interruptJigsaw() {
+      if (!jigsawStarted || jigsawInterrupted) return;
+
+      jigsawInterrupted = true;
+      if (jigsawInterval) clearInterval(jigsawInterval);
+
+      document.getElementById('jigsawMessage').innerHTML = '<span class="danger">Analyse abgeschlossen.</span> Die Anlage hat das Konzept „200 Teile“ neu bewertet.';
+      document.getElementById('jigsawInterrupt').style.display = 'block';
+      document.getElementById('jigsawInterrupt').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
   </script>
