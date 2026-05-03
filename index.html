@@ -2163,7 +2163,7 @@
         audio.loop = true;
         audio.volume = 0.22;
       } else {
-        audio.volume = 0.55;
+        audio.volume = key === 'coin' ? 0.75 : 0.55;
       }
       sfx[key] = audio;
     });
@@ -2182,9 +2182,15 @@
       if (!audio) return;
 
       try {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      } catch (e) {}
+        const player = audio.cloneNode(true);
+        player.volume = audio.volume;
+        player.play().catch(() => {});
+      } catch (e) {
+        try {
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        } catch (err) {}
+      }
     }
 
     function toggleSound() {
@@ -2192,7 +2198,7 @@
       soundEnabled = !soundEnabled;
       const button = document.getElementById('soundToggle');
       if (button) button.textContent = 'Sound: ' + (soundEnabled ? 'an' : 'aus');
-      playSound('click');
+      if (soundEnabled) setTimeout(() => playSound('click'), 80);
     }
 
     function toggleMusic() {
@@ -2211,6 +2217,25 @@
           ambience.pause();
         }
       } catch (e) {}
+    }
+
+
+    function facilityMessage(elementId, htmlText, type = 'neutral') {
+      const box = document.getElementById(elementId);
+      if (!box) return;
+
+      box.innerHTML = htmlText;
+
+      if (type === 'success' || String(htmlText).includes('success')) {
+        playSound('success');
+        animateElement(elementId, 'pulse-success');
+      } else if (type === 'error' || String(htmlText).includes('danger')) {
+        playSound('error');
+        animateElement(elementId, 'shake-error');
+      } else {
+        box.classList.add('terminal-flicker');
+        setTimeout(() => box.classList.remove('terminal-flicker'), 950);
+      }
     }
 
     function animateElement(id, className) {
