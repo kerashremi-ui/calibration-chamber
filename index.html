@@ -1177,6 +1177,7 @@
     }
 
     .jigsaw-board {
+      touch-action: none;
       min-height: 330px;
       border: 1px dashed rgba(99,255,90,.32);
       border-radius: 18px;
@@ -1201,6 +1202,7 @@
     }
 
     .piece-tray {
+      touch-action: none;
       min-height: 330px;
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 18px;
@@ -1280,6 +1282,7 @@
 
       .jigsaw-board,
       .piece-tray {
+      touch-action: none;
         min-height: 260px !important;
       }
 
@@ -1287,6 +1290,78 @@
         width: 54px !important;
         height: 54px !important;
         font-size: .62rem !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    .release-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .release-slot {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 14px;
+    }
+
+    .release-slot label {
+      display: block;
+      color: var(--green);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .release-slot select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: #070a0f;
+      color: var(--text);
+      padding: 12px;
+      font: inherit;
+    }
+
+    .release-slot select:focus {
+      outline: none;
+      border-color: rgba(99,255,90,.55);
+      box-shadow: 0 0 18px rgba(99,255,90,.10);
+    }
+
+    .release-final {
+      border: 1px solid rgba(99,255,90,.32);
+      background:
+        radial-gradient(circle at 75% 20%, rgba(99,255,90,.10), transparent 34%),
+        rgba(99,255,90,.045);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .release-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .release-stats div {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(0,0,0,.18);
+    }
+
+    @media (max-width: 720px) {
+      .release-grid,
+      .release-stats {
+        grid-template-columns: 1fr !important;
       }
     }
   </style>
@@ -1774,7 +1849,7 @@
 
           <div id="bonusLockedNotice" class="bonus-locked">
             <strong>Bonusprotokoll gesperrt.</strong><br>
-            Für die Zusatzkammern werden alle 7 Testmünzen benötigt.
+            Für die Zusatzkammern werden alle 7 Testmünzen benötigt. Falls im Systemkern eine fehlt, kann die Kernfreigabe erneut gestartet werden.
           </div>
 
           <div id="bonusUnlockedNotice" class="bonus-unlocked" style="display:none;">
@@ -1784,6 +1859,7 @@
 
           <div class="actions">
             <button id="bonusStartButton" class="blue" onclick="openBonusChambers()" disabled>Bonusprotokoll öffnen</button>
+            <button onclick="startCore()">Systemkern erneut kalibrieren</button>
             <button onclick="showScreen('intro')">Archiv verlassen</button>
           </div>
         </div>
@@ -1848,18 +1924,97 @@
       </section>
 
       <section id="bonus2" class="screen">
-        <h2>Bonus B02 // Letztes Protokoll</h2>
+        <h2>Bonus B02 // Entlassungsprotokoll</h2>
+
         <div class="terminal">
-          <p><strong>Status:</strong> freigeschaltet, aber noch nicht rekonstruiert</p>
+          <p><strong>LETZTES PROTOKOLL AKTIVIERT</strong></p>
           <p>
-            Hier kann später die finale Bonuskammer entstehen. Danach wäre der perfekte Ort für Credits,
-            Dankesnachricht und Remortems Abschlussprotokoll.
+            Vor der Entlassung muss das Testsubjekt die registrierten Testmünzen den richtigen Anlagenbereichen zuordnen.
+            Die Anlage möchte damit beweisen, dass Sie neugierig waren. Nicht zwingend vernünftig, aber neugierig.
+          </p>
+          <p>
+            Ordnen Sie pro Bereich genau eine Testmünze zu.
           </p>
         </div>
 
+        <div class="release-grid">
+          <div class="release-slot">
+            <label>Start / Anlage allgemein</label>
+            <select id="releaseStart"></select>
+          </div>
+
+          <div class="release-slot">
+            <label>Kammer 01 // Beobachtungstest</label>
+            <select id="releaseCh1"></select>
+          </div>
+
+          <div class="release-slot">
+            <label>Kammer 02 // Raumspalt-Kalibrierung</label>
+            <select id="releaseCh2"></select>
+          </div>
+
+          <div class="release-slot">
+            <label>Kammer 03 // Trägheitsprüfung</label>
+            <select id="releaseCh3"></select>
+          </div>
+
+          <div class="release-slot">
+            <label>Kammer 04 // Strahlumleitung</label>
+            <select id="releaseCh4"></select>
+          </div>
+
+          <div class="release-slot">
+            <label>Kammer 05 // Systemkern</label>
+            <select id="releaseCh5"></select>
+          </div>
+        </div>
+
         <div class="actions">
+          <button class="primary" onclick="checkReleaseProtocol()">Entlassungsprotokoll prüfen</button>
+          <button onclick="resetReleaseProtocol()">Zuordnung zurücksetzen</button>
           <button onclick="showScreen('bonus1')">Zurück zu Bonus B01</button>
-          <button onclick="showScreen('intro')">Archiv verlassen</button>
+        </div>
+
+        <div class="message-box" id="releaseMessage">
+          Protokoll bereit. Die Anlage akzeptiert Zuordnungen, keine Ausreden.
+        </div>
+
+        <div id="releaseFinal" class="release-final">
+          <h3>ENTLASSUNGSPROTOKOLL BESTÄTIGT</h3>
+          <p class="success">Testsubjekt: entlassen</p>
+
+          <div class="release-stats">
+            <div><strong>Neugier:</strong><br>überdurchschnittlich</div>
+            <div><strong>Sachschäden:</strong><br>dokumentiert</div>
+            <div><strong>Bonuszugang:</strong><br>genehmigt</div>
+            <div><strong>Kuchenstatus:</strong><br>weiterhin ungeklärt</div>
+          </div>
+
+          <p>
+            Die Anlage gratuliert. Widerwillig. Bitte verlassen Sie die Testumgebung geordnet
+            und erzählen Sie niemandem, dass der Zeitknopf nachgegeben hat.
+          </p>
+
+          <div class="coordinate-output">
+            BONUS-KOORDINATEN PLATZHALTER<br>
+            N 49° XX.XXX<br>
+            E 012° XX.XXX
+          </div>
+
+          <div class="core-credits">
+            <h3>Danke fürs Spielen.</h3>
+            <p>
+              Ein Cache von <strong>Team_Aperture</strong><br>
+              Remortem &amp; Vintagium__
+            </p>
+            <p>
+              Für alle Testsubjekte, die nicht nur gesucht, sondern wirklich gespielt haben.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button onclick="showScreen('intro')">Archiv verlassen</button>
+          </div>
         </div>
       </section>
     </main>
@@ -3006,6 +3161,7 @@
 
     function startPieceDrag(event) {
       if (jigsawInterrupted) return;
+      event.preventDefault();
 
       draggedPiece = event.currentTarget;
       draggedPiece.setPointerCapture(event.pointerId);
@@ -3014,6 +3170,16 @@
       dragOffsetX = event.clientX - rect.left;
       dragOffsetY = event.clientY - rect.top;
 
+      draggedPiece.dataset.originalParent = draggedPiece.parentElement.id || '';
+      draggedPiece.dataset.wasOnBoard = draggedPiece.parentElement.id === 'jigsawBoard' ? '1' : '0';
+
+      document.body.appendChild(draggedPiece);
+      draggedPiece.style.position = 'fixed';
+      draggedPiece.style.left = rect.left + 'px';
+      draggedPiece.style.top = rect.top + 'px';
+      draggedPiece.style.zIndex = '9999';
+      draggedPiece.style.pointerEvents = 'none';
+
       document.addEventListener('pointermove', dragPiece);
       document.addEventListener('pointerup', stopPieceDrag, { once: true });
     }
@@ -3021,31 +3187,48 @@
     function dragPiece(event) {
       if (!draggedPiece) return;
 
-      const parent = draggedPiece.parentElement;
-      const parentRect = parent.getBoundingClientRect();
-      const x = event.clientX - parentRect.left - dragOffsetX;
-      const y = event.clientY - parentRect.top - dragOffsetY;
-
-      draggedPiece.style.left = Math.max(0, Math.min(parentRect.width - draggedPiece.offsetWidth, x)) + 'px';
-      draggedPiece.style.top = Math.max(0, Math.min(parentRect.height - draggedPiece.offsetHeight, y)) + 'px';
+      draggedPiece.style.left = (event.clientX - dragOffsetX) + 'px';
+      draggedPiece.style.top = (event.clientY - dragOffsetY) + 'px';
     }
 
     function stopPieceDrag(event) {
       if (!draggedPiece) return;
 
       const board = document.getElementById('jigsawBoard');
+      const tray = document.getElementById('pieceTray');
       const boardRect = board.getBoundingClientRect();
+      const trayRect = tray.getBoundingClientRect();
       const pieceRect = draggedPiece.getBoundingClientRect();
 
-      const centerX = pieceRect.left + pieceRect.width / 2;
-      const centerY = pieceRect.top + pieceRect.height / 2;
+      const centerX = event.clientX;
+      const centerY = event.clientY;
 
-      if (centerX >= boardRect.left && centerX <= boardRect.right && centerY >= boardRect.top && centerY <= boardRect.bottom) {
+      const droppedOnBoard = centerX >= boardRect.left && centerX <= boardRect.right && centerY >= boardRect.top && centerY <= boardRect.bottom;
+      const droppedOnTray = centerX >= trayRect.left && centerX <= trayRect.right && centerY >= trayRect.top && centerY <= trayRect.bottom;
+
+      draggedPiece.style.position = 'absolute';
+      draggedPiece.style.zIndex = '';
+      draggedPiece.style.pointerEvents = '';
+
+      if (droppedOnBoard) {
         board.appendChild(draggedPiece);
         draggedPiece.style.left = (centerX - boardRect.left - pieceRect.width / 2) + 'px';
         draggedPiece.style.top = (centerY - boardRect.top - pieceRect.height / 2) + 'px';
-        jigsawProgress = Math.min(35, jigsawProgress + 1);
-        updateJigsawStatus();
+
+        if (draggedPiece.dataset.wasOnBoard !== '1') {
+          jigsawProgress = Math.min(35, jigsawProgress + 1);
+          updateJigsawStatus();
+        }
+      } else if (droppedOnTray) {
+        tray.appendChild(draggedPiece);
+        draggedPiece.style.left = (centerX - trayRect.left - pieceRect.width / 2) + 'px';
+        draggedPiece.style.top = (centerY - trayRect.top - pieceRect.height / 2) + 'px';
+      } else {
+        const originalParent = draggedPiece.dataset.originalParent === 'jigsawBoard' ? board : tray;
+        const originalRect = originalParent.getBoundingClientRect();
+        originalParent.appendChild(draggedPiece);
+        draggedPiece.style.left = Math.max(0, Math.min(originalRect.width - pieceRect.width, centerX - originalRect.left - pieceRect.width / 2)) + 'px';
+        draggedPiece.style.top = Math.max(0, Math.min(originalRect.height - pieceRect.height, centerY - originalRect.top - pieceRect.height / 2)) + 'px';
       }
 
       document.removeEventListener('pointermove', dragPiece);
@@ -3071,6 +3254,98 @@
       document.getElementById('jigsawInterrupt').style.display = 'block';
       document.getElementById('jigsawInterrupt').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+
+
+    const releaseOptions = [
+      { value: '', text: '— Testmünze auswählen —' },
+      { value: 'logo', text: 'Team_Aperture-Symbol' },
+      { value: 'drain', text: 'Bodenablauf' },
+      { value: 'screw', text: 'fehlende Schraube' },
+      { value: 'cube', text: 'Kalibrierungswürfel' },
+      { value: 'mirror', text: 'Service-Spiegel' },
+      { value: 'time', text: 'Zeitverlängerungsknopf' }
+    ];
+
+    const releaseCorrect = {
+      releaseStart: 'logo',
+      releaseCh1: 'drain',
+      releaseCh2: 'screw',
+      releaseCh3: 'cube',
+      releaseCh4: 'mirror',
+      releaseCh5: 'time'
+    };
+
+    function initReleaseProtocol() {
+      Object.keys(releaseCorrect).forEach(id => {
+        const select = document.getElementById(id);
+        if (!select || select.dataset.ready === '1') return;
+
+        releaseOptions.forEach(optionData => {
+          const option = document.createElement('option');
+          option.value = optionData.value;
+          option.textContent = optionData.text;
+          select.appendChild(option);
+        });
+
+        select.dataset.ready = '1';
+      });
+    }
+
+    function setReleaseMessage(text) {
+      const box = document.getElementById('releaseMessage');
+      if (box) box.innerHTML = text;
+    }
+
+    function checkReleaseProtocol() {
+      initReleaseProtocol();
+
+      const used = new Set();
+      let duplicates = false;
+      let empty = false;
+      let correct = true;
+
+      Object.entries(releaseCorrect).forEach(([id, expected]) => {
+        const select = document.getElementById(id);
+        const value = select.value;
+
+        if (!value) empty = true;
+        if (value && used.has(value)) duplicates = true;
+        if (value) used.add(value);
+        if (value !== expected) correct = false;
+      });
+
+      if (empty) {
+        setReleaseMessage('<span class="danger">Protokoll unvollständig.</span> Die Anlage kann niemanden entlassen, der Lücken hinterlässt. Angeblich.');
+        return;
+      }
+
+      if (duplicates) {
+        setReleaseMessage('<span class="danger">Doppelte Zuordnung erkannt.</span> Eine Testmünze kann nicht gleichzeitig in zwei Bereichen gefunden worden sein. Außer sie ist sehr motiviert.');
+        return;
+      }
+
+      if (!correct) {
+        setReleaseMessage('<span class="danger">Entlassungsprotokoll abgelehnt.</span> Mindestens eine Testmünze wurde dem falschen Anlagenbereich zugeordnet.');
+        return;
+      }
+
+      setReleaseMessage('<span class="success">Entlassungsprotokoll akzeptiert.</span> Die Anlage kann keinen sinnvollen Grund mehr finden, Sie festzuhalten.');
+      document.getElementById('releaseFinal').style.display = 'block';
+      document.getElementById('releaseFinal').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetReleaseProtocol() {
+      initReleaseProtocol();
+      Object.keys(releaseCorrect).forEach(id => {
+        const select = document.getElementById(id);
+        if (select) select.value = '';
+      });
+
+      document.getElementById('releaseFinal').style.display = 'none';
+      setReleaseMessage('Protokoll zurückgesetzt. Die Anlage löscht Ihre Aussagen aus taktischer Höflichkeit.');
+    }
+
+    document.addEventListener('DOMContentLoaded', initReleaseProtocol);
 
   </script>
 </body>
