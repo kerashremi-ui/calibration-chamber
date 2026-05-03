@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team_Aperture — Die Kalibrierungskammer</title>
+  <style>
+    :root {
+      --bg: #080b0f;
+      --panel: #121820;
+      --panel2: #18212b;
+      --text: #e9f7f4;
+      --muted: #93a8b3;
+      --orange: #ff9d2e;
+      --blue: #38bdf8;
+      --green: #8ef7b6;
+      --danger: #ff5d73;
+      --border: rgba(255,255,255,.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,157,46,.13), transparent 28%),
+        radial-gradient(circle at 85% 65%, rgba(56,189,248,.12), transparent 30%),
+        linear-gradient(135deg, #05070a, var(--bg));
+      color: var(--text);
+      font-family: "Courier New", Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(980px, 100%);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(10,14,19,.92);
+      box-shadow: 0 30px 90px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: bold;
+      letter-spacing: .04em;
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background:
+        linear-gradient(90deg, transparent 44%, rgba(255,255,255,.22) 45%, rgba(255,255,255,.22) 55%, transparent 56%),
+        linear-gradient(0deg, transparent 44%, rgba(255,255,255,.22) 45%, rgba(255,255,255,.22) 55%, transparent 56%),
+        conic-gradient(from 45deg, var(--orange), transparent 30%, var(--blue), transparent 70%, var(--orange));
+      box-shadow: 0 0 22px rgba(255,157,46,.2), 0 0 26px rgba(56,189,248,.18);
+      cursor: pointer;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: .85rem;
+      text-align: right;
+    }
+
+    main { padding: 28px; }
+
+    .screen {
+      display: none;
+      animation: fadeIn 240ms ease-out;
+    }
+
+    .screen.active { display: block; }
+
+    h1, h2 { margin-top: 0; line-height: 1.15; }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 4.4rem);
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--green);
+    }
+
+    p { color: var(--muted); line-height: 1.65; }
+
+    .glitch {
+      color: var(--green);
+      text-shadow: 0 0 14px rgba(142,247,182,.3);
+    }
+
+    .terminal {
+      background: #05080c;
+      border: 1px solid rgba(142,247,182,.28);
+      border-radius: 16px;
+      padding: 18px;
+      margin: 18px 0;
+      box-shadow: inset 0 0 30px rgba(142,247,182,.04);
+    }
+
+    .terminal strong { color: var(--green); }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #1f2933, #121820);
+      color: var(--text);
+      padding: 12px 18px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    button:hover, button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(255,157,46,.65);
+      box-shadow: 0 0 0 3px rgba(255,157,46,.12);
+      outline: none;
+    }
+
+    button.primary {
+      border-color: rgba(255,157,46,.55);
+      background: linear-gradient(180deg, #412815, #1c1510);
+    }
+
+    button.blue {
+      border-color: rgba(56,189,248,.55);
+      background: linear-gradient(180deg, #133247, #101923);
+    }
+
+    .room {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .object {
+      min-height: 120px;
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .object:hover { border-color: rgba(56,189,248,.45); }
+
+    .object .icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .object .name {
+      color: var(--text);
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .object .desc {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .object.solved {
+      border-color: rgba(142,247,182,.58);
+      box-shadow: 0 0 22px rgba(142,247,182,.08);
+    }
+
+    .message-box {
+      min-height: 96px;
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,.035);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .puzzle-panel {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,157,46,.25);
+      background: rgba(255,157,46,.045);
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .truth-panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      padding: 14px;
+    }
+
+    .truth-panel label {
+      display: block;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 220px;
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #070a0f;
+      color: var(--text);
+      padding: 12px;
+      font: inherit;
+    }
+
+    .success { color: var(--green); font-weight: bold; }
+    .danger { color: var(--danger); font-weight: bold; }
+
+    .values {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .value-card {
+      border: 1px solid rgba(142,247,182,.25);
+      background: rgba(142,247,182,.06);
+      color: var(--green);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: bold;
+    }
+
+    .coin-counter {
+      color: var(--orange);
+      font-weight: bold;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: 22px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 10px; }
+      main { padding: 20px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .status { text-align: left; }
+      .room, .panel-grid { grid-template-columns: 1fr; }
+      .object { min-height: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" onclick="findCoin('logo')" title="Team_Aperture"></div>
+        <div>TEAM_APERTURE // KALIBRIERUNGSKAMMER</div>
+      </div>
+      <div>
+        <div class="status" id="status">Status: Archiv beschädigt</div>
+        <div class="coin-counter" id="coinCounter">Calibration Coins: 0 / 3</div>
+      </div>
+    </header>
+
+    <main>
+      <section id="intro" class="screen active">
+        <h1>Die Kalibrierungskammer</h1>
+        <p class="glitch">TEAM_APERTURE FORMATIONSARCHIV // Zugriff teilweise wiederhergestellt</p>
+
+        <div class="terminal">
+          <p><strong>Status:</strong> teilweise beschädigt</p>
+          <p><strong>Testsubjekte:</strong> 2</p>
+          <p><strong>Ergebnis:</strong> Geocaching-Team entstanden</p>
+          <p><strong>Kuchenstatus:</strong> administrativ irrelevant</p>
+        </div>
+
+        <p>
+          Willkommen, Testsubjekt. Um das Formationsereignis von Team_Aperture zu rekonstruieren,
+          absolvieren Sie die Kalibrierungssequenz. Die Koordinaten werden freigegeben, sobald das
+          System davon überzeugt ist, dass Sie in der Lage sind, verdächtigen Anweisungen aus dem
+          Internet zu folgen.
+        </p>
+
+        <div class="actions">
+          <button class="primary" onclick="showScreen('chamber1')">Testsequenz starten</button>
+        </div>
+
+        <p class="footer-note">
+          Hinweis: Diese Simulation ist kostenlos, werbefrei und ohne Registrierung nutzbar. Kein Download, keine Installation, kein Kauf.
+        </p>
+      </section>
+
+      <section id="chamber1" class="screen">
+        <h2>Kammer 01 // Beobachtungstest</h2>
+        <p>
+          Untersuchen Sie die Kammer. Einige Objekte sind nützlich. Einige Objekte sind beleidigt,
+          dass sie nicht nützlich sind. Das ist kein technischer Fehler.
+        </p>
+
+        <div class="room">
+          <button class="object" onclick="inspectObject('terminal')">
+            <span class="icon">▣</span>
+            <span class="name">Altes Terminal</span>
+            <span class="desc">Ein flackernder Bildschirm mit übertriebener Autorität.</span>
+          </button>
+
+          <button class="object" onclick="inspectObject('sign')">
+            <span class="icon">△</span>
+            <span class="name">Warnschild</span>
+            <span class="desc">Die Warnung wirkt wichtig. Oder zumindest sehr überzeugt von sich selbst.</span>
+          </button>
+
+          <button class="object" onclick="inspectObject('panels')">
+            <span class="icon">▤</span>
+            <span class="name">Drei Wandpaneele</span>
+            <span class="desc">Drei Paneele. Drei Aussagen. Nur eine davon hilft weiter.</span>
+          </button>
+
+          <button class="object" onclick="inspectObject('drain')">
+            <span class="icon">◎</span>
+            <span class="name">Bodenablauf</span>
+            <span class="desc">Er sieht so aus, als hätte er Geheimnisse. Und Feuchtigkeit.</span>
+          </button>
+
+          <button class="object" onclick="inspectObject('button')">
+            <span class="icon">◉</span>
+            <span class="name">Großer Knopf</span>
+            <span class="desc">Groß, rund und wahrscheinlich überqualifiziert.</span>
+          </button>
+
+          <button class="object" onclick="inspectObject('door')">
+            <span class="icon">▥</span>
+            <span class="name">Verriegelte Tür</span>
+            <span class="desc">Sie verschlossen zu nennen wäre eine Untertreibung.</span>
+          </button>
+        </div>
+
+        <div class="message-box" id="messageBox">
+          System bereit. Bitte klicken Sie nicht wahllos auf alles. Oder doch. Genau dafür wurde diese Kammer gebaut.
+        </div>
+
+        <div id="puzzle" class="puzzle-panel" style="display:none;">
+          <h3>Wandpaneel-Prüfung</h3>
+          <p>
+            Das Warnschild behauptet: <strong>„Nur ein Paneel sagt die Wahrheit.“</strong><br />
+            Bestimmen Sie den gesuchten ersten Wert <strong>A</strong>.
+          </p>
+
+          <div class="panel-grid">
+            <div class="truth-panel">
+              <label>Paneel 1</label>
+              <p>„A ist nicht 4.“</p>
+            </div>
+            <div class="truth-panel">
+              <label>Paneel 2</label>
+              <p>„A ist 7.“</p>
+            </div>
+            <div class="truth-panel">
+              <label>Paneel 3</label>
+              <p>„Paneel 1 lügt.“</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <input id="answerA" type="number" min="0" max="9" placeholder="Wert für A eingeben" />
+            <button class="primary" onclick="checkChamberOne()">Eingabe prüfen</button>
+            <button onclick="showHint()">Hinweis anfordern</button>
+          </div>
+
+          <div id="hintBox" class="message-box" style="display:none;"></div>
+        </div>
+
+        <div id="result" class="terminal" style="display:none;">
+          <p class="success">Kammer 01 abgeschlossen.</p>
+          <p>Beobachtungsgabe akzeptabel. Misstrauen gegenüber Wandpaneelen: empfohlen.</p>
+          <div class="values">
+            <div class="value-card">A = 7</div>
+            <div class="value-card">B = 4</div>
+          </div>
+          <div class="actions">
+            <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 02</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="placeholder" class="screen">
+        <h2>Kammer 02 // Raumspalt-Test</h2>
+        <div class="terminal">
+          <p><strong>Status:</strong> noch nicht rekonstruiert</p>
+          <p>
+            Die nächste Kammer wird später aktiviert. Bitte bewahren Sie die geborgenen Werte sicher auf.
+            Das System übernimmt keine Haftung für verlorene Zettel, nasse Logbücher oder spontane Kuchenlügen.
+          </p>
+        </div>
+        <div class="values">
+          <div class="value-card">A = 7</div>
+          <div class="value-card">B = 4</div>
+          <div class="value-card">C = ?</div>
+          <div class="value-card">D = ?</div>
+        </div>
+        <div class="actions">
+          <button onclick="showScreen('chamber1')">Zurück zu Kammer 01</button>
+          <button onclick="showScreen('intro')">Archiv verlassen</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let hintLevel = 0;
+    const foundCoins = new Set();
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+
+      const status = document.getElementById('status');
+      if (id === 'intro') status.textContent = 'Status: Archiv beschädigt';
+      if (id === 'chamber1') status.textContent = 'Status: Kammer 01 aktiv';
+      if (id === 'placeholder') status.textContent = 'Status: Kammer 02 ausstehend';
+    }
+
+    function setMessage(text) {
+      const box = document.getElementById('messageBox');
+      if (box) box.innerHTML = text;
+    }
+
+    function findCoin(id) {
+      if (foundCoins.has(id)) return;
+      foundCoins.add(id);
+      document.getElementById('coinCounter').textContent = 'Calibration Coins: ' + foundCoins.size + ' / 3';
+
+      if (id === 'logo') {
+        alert('Calibration Coin gefunden. Das System ist widerwillig beeindruckt.');
+      }
+
+      if (foundCoins.size === 3) {
+        alert('Bonusarchiv freigeschaltet. In einer späteren Version wartet hier ein geheimes Extra.');
+      }
+    }
+
+    function inspectObject(objectName) {
+      const puzzle = document.getElementById('puzzle');
+
+      const messages = {
+        terminal: 'Das Terminal flackert: <strong>„Willkommen, Testsubjekt. Bitte geraten Sie nicht in Panik. Panik wurde aus Budgetgründen deaktiviert.“</strong>',
+        sign: 'Auf dem Warnschild steht: <strong>„Nur ein Paneel sagt die Wahrheit.“</strong> Darunter wurde handschriftlich ergänzt: „Wahrscheinlich.“',
+        panels: 'Die Wandpaneele beginnen gleichzeitig zu summen. Das ist entweder ein Rätsel oder schlechte Wartung. Die Paneel-Prüfung wurde geöffnet.',
+        drain: 'Im Bodenablauf liegt nichts außer Staub, Feuchtigkeit und einer sehr kleinen Enttäuschung.',
+        button: 'Sie drücken den großen Knopf. Irgendwo in der Anlage macht es „klick“. Das System ist stolz auf Ihre Initiative, aber nicht auf Ihr Ergebnis.',
+        door: 'Die Tür bleibt verschlossen. Eine Anzeige blinkt: <strong>„Erst denken, dann fliehen.“</strong>'
+      };
+
+      setMessage(messages[objectName]);
+
+      if (objectName === 'terminal') findCoin('terminal');
+      if (objectName === 'drain') findCoin('drain');
+
+      if (objectName === 'panels') {
+        puzzle.style.display = 'block';
+        puzzle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function checkChamberOne() {
+      const answer = document.getElementById('answerA').value.trim();
+      const result = document.getElementById('result');
+
+      if (answer === '7') {
+        setMessage('<span class="success">Korrekt.</span> Das System hat kurz überlegt, ob es Ihnen gratulieren soll. Es hat sich für eine nüchterne Bestätigung entschieden.');
+        result.style.display = 'block';
+        document.querySelectorAll('.object')[2].classList.add('solved');
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else if (answer === '') {
+        setMessage('<span class="danger">Keine Eingabe erkannt.</span> Das System akzeptiert mutige Vermutungen, aber keine Luft.');
+      } else {
+        setMessage('<span class="danger">Fehlerhafte Eingabe.</span> Das System erwog kurz Mitleid, entschied sich jedoch dagegen.');
+      }
+    }
+
+    function showHint() {
+      hintLevel += 1;
+      const hintBox = document.getElementById('hintBox');
+      hintBox.style.display = 'block';
+
+      if (hintLevel === 1) {
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Vergleichen Sie Paneel 1 und Paneel 3. Können beide gleichzeitig sinnvoll sein?';
+      } else if (hintLevel === 2) {
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Wenn A = 7 wäre, welche Aussagen wären dann wahr?';
+      } else {
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> Paneel 2 ist das hilfreiche Paneel. Die gesuchte Zahl ist 7.';
+      }
+    }
+  </script>
+</body>
+</html>
