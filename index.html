@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Team_Aperture — Die Kalibrierungskammer</title>
+  <title>Team_Aperture — Die Kalibrierungsanlage</title>
   <style>
     :root {
       --bg: #080b0f;
@@ -439,6 +439,117 @@
       margin-top: 10px;
     }
 
+
+    .cube-area {
+      display: grid;
+      grid-template-columns: minmax(220px, .75fr) minmax(320px, 1.25fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .cube-panel, .plates-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+    }
+
+    .calibration-cube {
+      width: 150px;
+      height: 150px;
+      margin: 18px auto;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.22);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.13), transparent 45%),
+        radial-gradient(circle at 35% 35%, rgba(99,255,90,.20), transparent 28%),
+        radial-gradient(circle at 70% 70%, rgba(255,75,53,.18), transparent 30%),
+        #141c24;
+      box-shadow:
+        inset 0 0 26px rgba(255,255,255,.04),
+        0 0 24px rgba(99,255,90,.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text);
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      letter-spacing: .04em;
+    }
+
+    .calibration-cube:hover {
+      border-color: rgba(99,255,90,.55);
+      box-shadow:
+        inset 0 0 26px rgba(255,255,255,.04),
+        0 0 28px rgba(99,255,90,.18);
+    }
+
+    .plates-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(110px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .plate {
+      min-height: 112px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.05), transparent 45%),
+        linear-gradient(180deg, var(--panel2), var(--panel));
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .plate:hover {
+      border-color: rgba(99,255,90,.45);
+    }
+
+    .plate.active {
+      border-color: rgba(255,75,53,.7);
+      box-shadow: 0 0 22px rgba(255,75,53,.14);
+    }
+
+    .plate-title {
+      display: block;
+      color: var(--text);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .plate-sub {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.35;
+    }
+
+    .sequence-log {
+      border: 1px solid rgba(99,255,90,.24);
+      background: rgba(99,255,90,.045);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 16px;
+      color: var(--green);
+      min-height: 52px;
+    }
+
+    .google-troll {
+      border: 1px solid rgba(255,75,53,.34);
+      background: rgba(255,75,53,.06);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 16px;
+      display: none;
+    }
+
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -454,6 +565,588 @@
       h1 { letter-spacing: .04em; }
     }
   </style>
+
+  <style>
+    @media (max-width: 720px) {
+      body {
+        align-items: flex-start !important;
+        padding: 8px !important;
+        overflow-x: hidden !important;
+      }
+
+      .app {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+      }
+
+      main {
+        padding: 16px !important;
+      }
+
+      .cube-area,
+      .rift-layout {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+      }
+
+      .plates-grid,
+      .node-grid,
+      .room,
+      .panel-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      .cube-panel,
+      .plates-panel,
+      .rift-tray,
+      .rift-board {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .plate {
+        width: 100% !important;
+        min-height: 92px !important;
+      }
+
+      .calibration-cube {
+        width: 138px !important;
+        height: 138px !important;
+      }
+
+      h1 {
+        font-size: clamp(1.55rem, 11vw, 2.25rem) !important;
+      }
+
+      h2 {
+        font-size: clamp(1.25rem, 8vw, 1.75rem) !important;
+      }
+
+      h3 {
+        font-size: 1.25rem !important;
+      }
+
+      p,
+      .message-box,
+      .terminal,
+      .plate-sub,
+      .rift-help {
+        overflow-wrap: anywhere !important;
+      }
+
+      .actions {
+        flex-direction: column !important;
+      }
+
+      .actions button,
+      .actions input {
+        width: 100% !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    .sliding-chamber {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .sliding-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(42px, 1fr));
+      gap: 6px;
+      margin: 16px auto;
+      max-width: 680px;
+    }
+
+    .grid-cell {
+      min-height: 58px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      font-size: .78rem;
+      color: var(--muted);
+      overflow: hidden;
+    }
+
+    .grid-cell.wall {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.09), transparent),
+        #05070a;
+      border-color: rgba(255,255,255,.20);
+      color: rgba(255,255,255,.18);
+    }
+
+    .grid-cell.start {
+      border-color: rgba(255,255,255,.28);
+      background: rgba(255,255,255,.06);
+    }
+
+    .grid-cell.plate-gamma,
+    .grid-cell.plate-alpha,
+    .grid-cell.plate-delta,
+    .grid-cell.plate-beta,
+    .grid-cell.plate-epsilon {
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .grid-cell.plate-gamma { border-color: rgba(99,255,90,.38); }
+    .grid-cell.plate-alpha { border-color: rgba(99,255,90,.38); }
+    .grid-cell.plate-delta { border-color: rgba(99,255,90,.38); }
+    .grid-cell.plate-beta { border-color: rgba(99,255,90,.38); }
+    .grid-cell.plate-epsilon {
+      border-color: rgba(255,75,53,.55);
+      color: var(--red);
+    }
+
+    .grid-cell.cube-here::after {
+      content: "■";
+      position: absolute;
+      inset: 8px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(99,255,90,.26), transparent 35%),
+        radial-gradient(circle at 70% 70%, rgba(255,75,53,.22), transparent 35%),
+        #16202a;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 0 18px rgba(99,255,90,.16);
+      color: var(--text);
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .grid-cell.activated {
+      box-shadow: 0 0 22px rgba(99,255,90,.18);
+      background:
+        radial-gradient(circle at center, rgba(99,255,90,.13), transparent 55%),
+        rgba(99,255,90,.04);
+    }
+
+    .move-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 74px);
+      gap: 8px;
+      justify-content: center;
+      margin: 16px 0 8px;
+    }
+
+    .move-controls button {
+      border-radius: 16px;
+      padding: 12px;
+      font-size: 1.2rem;
+    }
+
+    .move-controls .empty-control {
+      visibility: hidden;
+    }
+
+    .sequence-target {
+      border: 1px solid rgba(99,255,90,.24);
+      background: rgba(99,255,90,.045);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 16px;
+      color: var(--green);
+    }
+
+    @media (max-width: 720px) {
+      .sliding-grid {
+        grid-template-columns: repeat(8, minmax(31px, 1fr)) !important;
+        gap: 4px !important;
+        max-width: 100% !important;
+      }
+
+      .grid-cell {
+        min-height: 42px !important;
+        border-radius: 8px !important;
+        font-size: .55rem !important;
+      }
+
+      .grid-cell.cube-here::after {
+        inset: 5px !important;
+        font-size: 1.3rem !important;
+        border-radius: 7px !important;
+      }
+
+      .move-controls {
+        grid-template-columns: repeat(3, 64px) !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    @media (max-width: 720px) {
+      h1 {
+        max-width: 100% !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+        hyphens: auto !important;
+        font-size: clamp(1.45rem, 9.5vw, 2.1rem) !important;
+        line-height: 1.12 !important;
+      }
+
+      .glitch,
+      .brand-code,
+      .status,
+      .coin-counter {
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    .sector-shell {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .sector-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .sector-badge {
+      color: var(--green);
+      border: 1px solid rgba(99,255,90,.25);
+      background: rgba(99,255,90,.045);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: bold;
+    }
+
+    .laser-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(48px, 1fr));
+      gap: 6px;
+      max-width: 560px;
+      margin: 16px auto;
+    }
+
+    .laser-cell {
+      min-height: 58px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      font-size: .86rem;
+    }
+
+    .laser-cell.blocker {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent),
+        #05070a;
+      border-color: rgba(255,255,255,.20);
+      color: rgba(255,255,255,.20);
+    }
+
+    .laser-cell.mirror {
+      cursor: pointer;
+      font-size: 1.65rem;
+      color: var(--text);
+      border-color: rgba(99,255,90,.26);
+    }
+
+    .laser-cell.mirror:hover {
+      border-color: rgba(99,255,90,.65);
+      box-shadow: 0 0 18px rgba(99,255,90,.12);
+    }
+
+    .laser-cell.service {
+      border-color: rgba(255,75,53,.45);
+      box-shadow: inset 0 0 18px rgba(255,75,53,.05);
+    }
+
+    .laser-cell.service::after {
+      content: "Service";
+      position: absolute;
+      bottom: 4px;
+      right: 5px;
+      font-size: .52rem;
+      color: var(--red);
+    }
+
+    .laser-cell.entry {
+      border-color: rgba(255,255,255,.24);
+      color: var(--text);
+    }
+
+    .laser-cell.exit {
+      border-color: rgba(99,255,90,.25);
+      color: var(--green);
+    }
+
+    .laser-cell.beam {
+      background:
+        radial-gradient(circle at center, rgba(255,75,53,.36), transparent 45%),
+        rgba(255,75,53,.08);
+      border-color: rgba(255,75,53,.7);
+      color: var(--text);
+      box-shadow: 0 0 22px rgba(255,75,53,.25);
+    }
+
+    .sector-history {
+      border: 1px solid rgba(99,255,90,.24);
+      background: rgba(99,255,90,.045);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 14px;
+      color: var(--green);
+      min-height: 52px;
+    }
+
+    .sector-map {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(72px, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .sector-map div {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,.025);
+      font-size: .85rem;
+    }
+
+    .sector-map .visited {
+      color: var(--green);
+      border-color: rgba(99,255,90,.45);
+      background: rgba(99,255,90,.05);
+    }
+
+    @media (max-width: 720px) {
+      .laser-grid {
+        grid-template-columns: repeat(6, minmax(34px, 1fr)) !important;
+        gap: 4px !important;
+        max-width: 100% !important;
+      }
+
+      .laser-cell {
+        min-height: 42px !important;
+        border-radius: 8px !important;
+        font-size: .62rem !important;
+      }
+
+      .laser-cell.mirror {
+        font-size: 1.15rem !important;
+      }
+
+      .sector-map {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    .laser-cell.receiver {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        #07090c;
+      border-color: rgba(255,255,255,.28);
+      color: #cfd4da;
+      box-shadow: inset 0 0 18px rgba(255,255,255,.06);
+      font-weight: bold;
+    }
+
+    .laser-cell.receiver::after {
+      content: "Core";
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      font-size: .52rem;
+      color: rgba(255,255,255,.55);
+      letter-spacing: .04em;
+    }
+  </style>
+
+
+  <style>
+    .core-warning {
+      border: 1px solid rgba(255,75,53,.35);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,75,53,.12), transparent 34%),
+        rgba(255,75,53,.045);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 18px 0;
+    }
+
+    .core-timer {
+      font-size: clamp(2.2rem, 10vw, 4.6rem);
+      letter-spacing: .08em;
+      color: var(--red);
+      text-shadow: 0 0 18px rgba(255,75,53,.25);
+      font-weight: 900;
+      margin: 14px 0;
+    }
+
+    .core-step {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .core-input-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(48px, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .pair-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(80px, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .core-input-grid label,
+    .pair-grid label {
+      color: var(--green);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+
+    .core-input-grid input,
+    .pair-grid input,
+    .final-code-input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 12px;
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .core-input-grid input:focus,
+    .pair-grid input:focus,
+    .final-code-input:focus {
+      border-color: rgba(99,255,90,.55);
+      box-shadow: 0 0 18px rgba(99,255,90,.10);
+    }
+
+    .add-time-btn {
+      border-color: rgba(255,255,255,.18) !important;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.035)),
+        rgba(56,189,248,.08) !important;
+      color: var(--text) !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .add-time-btn.broken {
+      background:
+        linear-gradient(180deg, rgba(255,75,53,.24), rgba(255,75,53,.08)),
+        rgba(0,0,0,.35) !important;
+      border-color: rgba(255,75,53,.55) !important;
+      transform: rotate(-1.5deg);
+      cursor: not-allowed;
+    }
+
+    .core-credits {
+      border: 1px solid rgba(99,255,90,.32);
+      background:
+        radial-gradient(circle at 70% 20%, rgba(99,255,90,.10), transparent 34%),
+        rgba(99,255,90,.045);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .coordinate-output {
+      font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+      color: var(--green);
+      letter-spacing: .04em;
+      line-height: 1.7;
+      border: 1px solid rgba(99,255,90,.25);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(0,0,0,.24);
+    }
+
+    @media (max-width: 720px) {
+      .core-input-grid {
+        grid-template-columns: repeat(4, minmax(48px, 1fr)) !important;
+      }
+
+      .pair-grid {
+        grid-template-columns: repeat(2, minmax(80px, 1fr)) !important;
+      }
+    }
+  </style>
+
+
+  <style>
+    .bonus-locked {
+      border: 1px solid rgba(255,75,53,.32);
+      background: rgba(255,75,53,.045);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 16px;
+      color: var(--muted);
+    }
+
+    .bonus-unlocked {
+      border: 1px solid rgba(99,255,90,.32);
+      background: rgba(99,255,90,.055);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+
+    .bonus-title {
+      color: var(--green);
+      font-weight: bold;
+      letter-spacing: .04em;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -465,13 +1158,13 @@
       </div>
       <div>
         <div class="status" id="status">Status: Testsubjekt eingeschlossen</div>
-        <div class="coin-counter" id="coinCounter">Calibration Coins: 0 / 4</div>
+        <div class="coin-counter" id="coinCounter">Testmünzen: 0 / 7</div>
       </div>
     </header>
 
     <main>
       <section id="intro" class="screen active">
-        <h1>Die Kalibrierungskammer</h1>
+        <h1>Die Kalibrierungsanlage</h1>
         <p class="glitch">WARNUNG // TESTSUBJEKT EINGESPERRT // FERNENTRIEGELUNG DEAKTIVIERT</p>
 
         <div class="terminal">
@@ -678,30 +1371,308 @@
             <div class="value-card">D = 9</div>
           </div>
           <div class="actions">
-            <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 03</button>
+            <button class="blue" onclick="showScreen('chamber3')">Weiter zu Kammer 03</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="chamber3" class="screen">
+        <h2>Kammer 03 // Trägheitsprüfung</h2>
+        <p>
+          Der Kalibrierungswürfel bewegt sich nicht feldweise. Er rutscht in eine Richtung, bis ihn eine Wand stoppt.
+          Druckplatten zählen nur, wenn der Würfel darauf zum Stillstand kommt.
+        </p>
+
+        <div class="terminal">
+          <p><strong>Systemnotiz:</strong> Die Anlage versteckt relevante Informationen gern dort, wo man sie fast überliest.</p>
+          <p>
+            Diaγnoseberichte wurden teilweise wiederhergestellt. Die αktive Energieversorgung reagiert stabil.
+            Daδurch kann der Zwischenspeicher vorbereitet werden, βevor der Türmechanismus freigegeben wird.
+          </p>
+          <p>
+            Die Platte für externe Wissensbeschaffung ist kein Teil einer seriösen Versuchsdurchführung,
+            aber sie ist leider sehr überzeugt von sich.
+          </p>
+        </div>
+
+        <div class="sliding-chamber">
+          <h3>Testfeld</h3>
+          <div class="sliding-grid" id="slidingGrid"></div>
+
+          <div class="move-controls">
+            <button class="empty-control" aria-hidden="true">·</button>
+            <button onclick="moveCube('up')" aria-label="nach oben">↑</button>
+            <button class="empty-control" aria-hidden="true">·</button>
+            <button onclick="moveCube('left')" aria-label="nach links">←</button>
+            <button onclick="touchCube()" aria-label="Würfel berühren">■</button>
+            <button onclick="moveCube('right')" aria-label="nach rechts">→</button>
+            <button class="empty-control" aria-hidden="true">·</button>
+            <button onclick="moveCube('down')" aria-label="nach unten">↓</button>
+            <button class="empty-control" aria-hidden="true">·</button>
+          </div>
+
+          <div class="sequence-target" id="slidingSequence">
+            Aktivierte Platten: —
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="checkSlidingSequence()">Sequenz prüfen</button>
+            <button onclick="resetSlidingPuzzle()">Würfel zurücksetzen</button>
+            <button onclick="showCubeHint()">Hinweis anfordern</button>
+          </div>
+
+          <div class="google-troll" id="googleTroll">
+            <p>
+              <strong>Epsilon aktiviert.</strong><br />
+              Das System hat erkannt, dass Sie offenbar externe Hilfe benötigen.
+              Weiterleitung zur allgemeinen Wissensbeschaffung wird vorbereitet.
+            </p>
+            <button onclick="openGoogle()">Externe Wissensbeschaffung akzeptieren</button>
+          </div>
+        </div>
+
+        <div class="message-box" id="cubeMessage">
+          Würfel-System bereit. Für die Testleistung bitte davon absehen, den Würfel unnötig zu berühren.
+        </div>
+
+        <div id="cubeHintBox" class="message-box" style="display:none;"></div>
+
+        <div id="cubeResult" class="terminal" style="display:none;">
+          <p class="success">Kammer 03 abgeschlossen.</p>
+          <p>Trägheitsprüfung akzeptiert. Der Würfel hatte keine Bremsen, aber immerhin eine Richtung.</p>
+          <div class="values">
+            <div class="value-card">E = 1</div>
+            <div class="value-card">F = 6</div>
+          </div>
+          <div class="actions">
+            <button class="blue" onclick="showScreen('chamber4')">Weiter zu Kammer 04</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="chamber4" class="screen">
+        <h2>Kammer 04 // Strahlumleitung</h2>
+        <p>
+          Der Teststrahl wird durch mehrere Sektoren geleitet. Jeder Sektor enthält kleine Spiegelmodule.
+          Drehen Sie die Spiegel, senden Sie den Strahl und beobachten Sie, wohin die Anlage Sie weiterleitet.
+        </p>
+
+        <div class="terminal">
+          <p><strong>Routing-Regel:</strong> Der Strahl muss die Sektoren in der stabilen Reihenfolge durchlaufen.</p>
+          <p>
+            Stabilitätsprotokoll: Anfang → Korrektur → Echo → Bündelung → Dämpfung → Kernfreigabe.
+            Das klingt absichtlich kompliziert, weil es absichtlich kompliziert ist.
+          </p>
+        </div>
+
+        <div class="sector-shell">
+          <div class="sector-top">
+            <div>
+              <h3 id="sectorTitle">Sektor A</h3>
+              <p id="sectorDescription" class="rift-help">Lade Sektor...</p>
+            </div>
+            <div class="sector-badge" id="sectorBadge">Aktueller Sektor: A</div>
+          </div>
+
+          <div class="laser-grid" id="laserGrid"></div>
+
+          <div class="actions">
+            <button class="primary" onclick="fireLaser()">Strahl senden</button>
+            <button onclick="resetSectorMirrors()">Sektorspiegel zurücksetzen</button>
+            <button onclick="resetLaserPuzzle()">Gesamtroute zurücksetzen</button>
+            <button onclick="showLaserHint()">Hinweis anfordern</button>
+          </div>
+
+          <div class="sector-history" id="sectorHistory">Route: A</div>
+
+          <div class="sector-map" id="sectorMap">
+            <div data-sector-dot="A">A // Anfang</div>
+            <div data-sector-dot="C">C // Korrektur</div>
+            <div data-sector-dot="E">E // Echo</div>
+            <div data-sector-dot="B">B // Bündelung</div>
+            <div data-sector-dot="D">D // Dämpfung</div>
+          </div>
+        </div>
+
+        <div class="message-box" id="laserMessage">
+          Strahlsystem bereit. Bitte sehen Sie nicht direkt in den Teststrahl. Er sieht zurück.
+        </div>
+
+        <div id="laserHintBox" class="message-box" style="display:none;"></div>
+
+        <div id="laserResult" class="terminal" style="display:none;">
+          <p class="success">Kammer 04 abgeschlossen.</p>
+          <p>Strahlroute stabil. Das System ist stolz, möchte aber nicht zugeben, dass Sie geholfen haben.</p>
+          <div class="values">
+            <div class="value-card">G = 8</div>
+            <div class="value-card">H = 3</div>
+          </div>
+          <div class="actions">
+            <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 05</button>
           </div>
         </div>
       </section>
 
       <section id="placeholder" class="screen">
-        <h2>Kammer 03 // Kalibrierungswürfel</h2>
+        <h2>Kammer 05 // Systemkern</h2>
+
+        <div id="coreIntro">
+          <div class="core-warning">
+            <p><strong>WARNUNG:</strong> Der Systemkern ist instabil.</p>
+            <p>
+              Nach Beginn der Kernfreigabe bleiben <strong>120 Sekunden</strong>. Legen Sie alle rekonstruierten Werte bereit.
+              Die Anlage empfiehlt Ruhe. Die Anlage selbst besitzt keine.
+            </p>
+          </div>
+
+          <div class="terminal">
+            <p><strong>Systemkern bereit.</strong></p>
+            <p>
+              Die Anlage geht davon aus, dass gewissenhafte Testsubjekte ihre rekonstruierten Werte selbstständig
+              dokumentiert haben. Diese Annahme wurde nicht geprüft, klingt aber professionell.
+            </p>
+            <p>
+              Nach Beginn der Freigabe werden keine archivierten Kammerwerte erneut angezeigt.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button class="primary" onclick="startCore()">Kernfreigabe starten</button>
+            <button onclick="showScreen('chamber4')">Zurück zu Kammer 04</button>
+          </div>
+        </div>
+
+        <div id="coreGame" style="display:none;">
+          <div class="core-timer" id="coreTimer">02:00</div>
+
+          <div class="actions">
+            <button id="addTimeButton" class="add-time-btn" onclick="addCoreTime()">+5 Sekunden hinzufügen</button>
+          </div>
+
+          <div class="core-step" id="coreStep1">
+            <h3>Schritt 1 // Einzelwerte</h3>
+            <p>Geben Sie die rekonstruierten Werte A bis H ein.</p>
+            <div class="core-input-grid">
+              <div><label>A</label><input id="coreA" inputmode="numeric" maxlength="1"></div>
+              <div><label>B</label><input id="coreB" inputmode="numeric" maxlength="1"></div>
+              <div><label>C</label><input id="coreC" inputmode="numeric" maxlength="1"></div>
+              <div><label>D</label><input id="coreD" inputmode="numeric" maxlength="1"></div>
+              <div><label>E</label><input id="coreE" inputmode="numeric" maxlength="1"></div>
+              <div><label>F</label><input id="coreF" inputmode="numeric" maxlength="1"></div>
+              <div><label>G</label><input id="coreG" inputmode="numeric" maxlength="1"></div>
+              <div><label>H</label><input id="coreH" inputmode="numeric" maxlength="1"></div>
+            </div>
+            <div class="actions">
+              <button class="blue" onclick="verifyCoreValues()">Einzelwerte prüfen</button>
+            </div>
+          </div>
+
+          <div class="core-step" id="coreStep2" style="display:none;">
+            <h3>Schritt 2 // Kammerpaare</h3>
+            <p>Die Anlage öffnet sich nicht mit Einzelwerten. Sie öffnet sich mit Kammerpaaren.</p>
+            <div class="pair-grid">
+              <div><label>AB</label><input id="pairAB" inputmode="numeric" maxlength="2"></div>
+              <div><label>CD</label><input id="pairCD" inputmode="numeric" maxlength="2"></div>
+              <div><label>EF</label><input id="pairEF" inputmode="numeric" maxlength="2"></div>
+              <div><label>GH</label><input id="pairGH" inputmode="numeric" maxlength="2"></div>
+            </div>
+            <div class="actions">
+              <button class="blue" onclick="verifyCorePairs()">Kammerpaare prüfen</button>
+            </div>
+          </div>
+
+          <div class="core-step" id="coreStep3" style="display:none;">
+            <h3>Schritt 3 // Freigabecode</h3>
+            <p>
+              Der Kern öffnet nicht in Testreihenfolge. Er öffnet in Freigabereihenfolge.
+              Die letzte Kammer hält den ersten Schlüssel.
+            </p>
+            <input id="finalCoreCode" class="final-code-input" inputmode="numeric" maxlength="8" placeholder="Freigabecode">
+            <div class="actions">
+              <button class="primary" onclick="verifyFinalCoreCode()">Systemkern öffnen</button>
+            </div>
+          </div>
+
+          <div class="message-box" id="coreMessage">
+            Systemkern bereit. Der Timer läuft. Das ist vermutlich Absicht.
+          </div>
+        </div>
+
+        <div id="coreFailure" style="display:none;">
+          <div class="core-warning">
+            <h3>NOTABSCHALTUNG FEHLGESCHLAGEN</h3>
+            <p>
+              Das Testsubjekt ist noch da. Unpraktisch.
+              Der Systemkern wird zurückgesetzt.
+            </p>
+          </div>
+          <div class="actions">
+            <button class="primary" onclick="resetCore()">Erneut versuchen</button>
+          </div>
+        </div>
+
+        <div id="coreSuccess" style="display:none;">
+          <div class="core-credits">
+            <h3>Systemkern geöffnet</h3>
+            <p class="success">Kalibrierung abgeschlossen. Das Testsubjekt darf die Anlage verlassen.</p>
+            <p>
+              Das System gratuliert widerwillig. Bitte nehmen Sie Ihre Koordinaten und tun Sie so,
+              als wäre das alles vollkommen normal gewesen.
+            </p>
+            <div class="coordinate-output">
+              N 49° 0X.XXX<br>
+              E 012° 0X.XXX
+            </div>
+            <p>
+              Platzhalter-Koordinaten aktiv. Finale Werte können später eingesetzt werden.
+            </p>
+          </div>
+
+          <div id="bonusLockedNotice" class="bonus-locked">
+            <strong>Bonusprotokoll gesperrt.</strong><br>
+            Für die Zusatzkammern werden alle 7 Testmünzen benötigt.
+          </div>
+
+          <div id="bonusUnlockedNotice" class="bonus-unlocked" style="display:none;">
+            <span class="bonus-title">Bonusprotokoll freigeschaltet.</span><br>
+            Alle Testmünzen wurden registriert. Die Anlage ist beunruhigt, aber bereit.
+          </div>
+
+          <div class="actions">
+            <button id="bonusStartButton" class="blue" onclick="openBonusChambers()" disabled>Bonusprotokoll öffnen</button>
+            <button onclick="showScreen('intro')">Archiv verlassen</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="bonus1" class="screen">
+        <h2>Bonus B01 // Archivfehler</h2>
         <div class="terminal">
-          <p><strong>Status:</strong> noch nicht rekonstruiert</p>
+          <p><strong>Status:</strong> freigeschaltet, aber noch nicht rekonstruiert</p>
           <p>
-            Die nächste Kammer wird später aktiviert. Bitte bewahren Sie die geborgenen Werte sicher auf.
-            Das System übernimmt keine Haftung für verlorene Zettel, nasse Logbücher oder spontane Kuchenlügen.
+            Diese Zusatzkammer wird später aktiviert. Die Anlage weist darauf hin, dass Bonusinhalte
+            grundsätzlich nicht existieren, bis sie plötzlich doch existieren.
           </p>
         </div>
-        <div class="values">
-          <div class="value-card">A = 4</div>
-          <div class="value-card">B = 7</div>
-          <div class="value-card">C = 2</div>
-          <div class="value-card">D = 9</div>
-          <div class="value-card">E = ?</div>
-          <div class="value-card">F = ?</div>
-        </div>
+
         <div class="actions">
-          <button onclick="showScreen('chamber2')">Zurück zu Kammer 02</button>
+          <button class="blue" onclick="showScreen('bonus2')">Weiter zu Bonus B02</button>
+          <button onclick="showScreen('placeholder')">Zurück zum Systemkern</button>
+        </div>
+      </section>
+
+      <section id="bonus2" class="screen">
+        <h2>Bonus B02 // Letztes Protokoll</h2>
+        <div class="terminal">
+          <p><strong>Status:</strong> freigeschaltet, aber noch nicht rekonstruiert</p>
+          <p>
+            Hier kann später die finale Bonuskammer entstehen. Danach wäre der perfekte Ort für Credits,
+            Dankesnachricht und Remortems Abschlussprotokoll.
+          </p>
+        </div>
+
+        <div class="actions">
+          <button onclick="showScreen('bonus1')">Zurück zu Bonus B01</button>
           <button onclick="showScreen('intro')">Archiv verlassen</button>
         </div>
       </section>
@@ -711,7 +1682,10 @@
   <script>
     let hintLevel = 0;
     let riftHintLevel = 0;
+    let cubeHintLevel = 0;
+    let cubeTouchCount = 0;
     let selectedCore = null;
+    const cubeSequence = [];
     const foundCoins = new Set();
     const riftPositions = { red: null, green: null };
 
@@ -725,7 +1699,11 @@
       if (id === 'intro') status.textContent = 'Status: Testsubjekt eingeschlossen';
       if (id === 'chamber1') status.textContent = 'Status: Kammer 01 aktiv';
       if (id === 'chamber2') status.textContent = 'Status: Kammer 02 aktiv';
-      if (id === 'placeholder') status.textContent = 'Status: Kammer 03 ausstehend';
+      if (id === 'chamber3') status.textContent = 'Status: Kammer 03 aktiv';
+      if (id === 'chamber4') status.textContent = 'Status: Kammer 04 aktiv';
+      if (id === 'placeholder') status.textContent = 'Status: Kammer 05 ausstehend';
+      if (id === 'bonus1') status.textContent = 'Status: Bonus B01 aktiv';
+      if (id === 'bonus2') status.textContent = 'Status: Bonus B02 aktiv';
     }
 
     function setMessage(text) {
@@ -739,7 +1717,8 @@
     }
 
     function updateCoinCounter() {
-      document.getElementById('coinCounter').textContent = 'Calibration Coins: ' + foundCoins.size + ' / 4';
+      document.getElementById('coinCounter').textContent = 'Testmünzen: ' + foundCoins.size + ' / 7';
+      updateBonusUnlock();
     }
 
     function findCoin(id) {
@@ -748,12 +1727,22 @@
       updateCoinCounter();
 
       if (id === 'logo') {
-        alert('Calibration Coin gefunden. Das System ist widerwillig beeindruckt.');
+        alert('Testmünze gefunden.\n\nSie haben das Team_Aperture-Symbol untersucht. Das System ist widerwillig beeindruckt.');
+      } else if (id === 'terminal') {
+        alert('Testmünze gefunden.\n\nZwischen flackernden Systemmeldungen lag eine kleine Testmünze. Das Terminal behauptet, sie sei „schon immer Teil der Benutzeroberfläche“ gewesen.');
+      } else if (id === 'drain') {
+        alert('Testmünze gefunden.\n\nIm Bodenablauf steckte tatsächlich eine kleine Testmünze. Das System empfiehlt, diese Entscheidung nicht hygienisch zu hinterfragen.');
       } else if (id === 'screwHole') {
-        alert('Calibration Coin gefunden.\n\nIm leeren Schraubenloch steckt eine kleine Kalibrierungsmarke.\nDas System nennt es „versteckte Qualitätskontrolle“. Die Wartungsabteilung nennt es „nicht unser Problem“.');
+        alert('Testmünze gefunden.\n\nIm leeren Schraubenloch steckt eine kleine Testmünze.\nDas System nennt es „versteckte Qualitätskontrolle“. Die Wartungsabteilung nennt es „nicht unser Problem“.');
+      } else if (id === 'cube') {
+        alert('Testmünze gefunden.\n\nUnter dem Kalibrierungswürfel klebte eine kleine Testmünze.\nDas System möchte wissen, warum Sie Dinge anheben, die ausdrücklich nicht angehoben werden sollten.');
+      } else if (id === 'serviceMirror') {
+        alert('Testmünze gefunden.\n\nHinter dem Service-Spiegel klebte eine kleine Testmünze.\nDas System nennt es „optische Rücklage“. Die Finanzabteilung nennt es „bitte nicht anfassen“.');
+      } else if (id === 'addTime') {
+        alert('Testmünze gefunden.\n\nDabei auch den Zeitverlängerungsknopf kaputtgemacht. Toll gemacht.\n\nHinter der herausgesprungenen Taste lag eine kleine Testmünze. Das System wird diesen Vorfall als „kreative Wartung“ dokumentieren.');
       }
 
-      if (foundCoins.size === 4) {
+      if (foundCoins.size === 7) {
         alert('Bonusarchiv freigeschaltet. In einer späteren Version wartet hier ein geheimes Extra.');
       }
     }
@@ -915,6 +1904,854 @@
         hintBox.innerHTML = '<strong>Hinweis 3:</strong> Rot gehört auf Knoten C. Grün liegt diagonal gegenüber, also auf Knoten B.';
       }
     }
+
+    function setCubeMessage(text) {
+      const box = document.getElementById('cubeMessage');
+      if (box) box.innerHTML = text;
+    }
+
+    function touchCube() {
+      cubeTouchCount += 1;
+
+      if (cubeTouchCount === 1) {
+        setCubeMessage('Aus Gründen der Testleistung bitten wir Sie, den Kalibrierungswürfel nicht unnötig zu berühren.');
+      } else if (cubeTouchCount === 2) {
+        setCubeMessage('Diese Bitte wurde offenbar als Einladung missverstanden.');
+      } else if (cubeTouchCount === 3) {
+        setCubeMessage('Der Würfel ist kein Haustier.');
+      } else if (cubeTouchCount === 4) {
+        setCubeMessage('Das System möchte betonen, dass wiederholtes Antippen keine wissenschaftlich anerkannte Methode ist.');
+      } else {
+        setCubeMessage('<span class="success">Testmünze gefunden.</span> Unter dem Kalibrierungswürfel klebte eine kleine Testmünze. Das System möchte wissen, warum Sie Dinge anheben, die ausdrücklich nicht angehoben werden sollten.');
+        findCoin('cube');
+      }
+    }
+
+    function pressPlate(plate) {
+      document.querySelectorAll('.plate').forEach(el => el.classList.remove('active'));
+      const activePlate = document.getElementById('plate-' + plate);
+      if (activePlate) activePlate.classList.add('active');
+
+      if (plate === 'epsilon') {
+        document.getElementById('googleTroll').style.display = 'block';
+        setCubeMessage('<span class="danger">Epsilon aktiviert.</span> Das System hat diese Eingabe als Hilferuf interpretiert.');
+        return;
+      }
+
+      cubeSequence.push(plate);
+      renderCubeSequence();
+
+      const messages = {
+        gamma: 'Gamma aktiviert: Diagnoseprüfung gestartet. Die Anlage möchte betonen, dass alles vollkommen normal ist.',
+        alpha: 'Alpha aktiviert: Energieversorgung stabil. Das System fühlt sich kurz wichtig.',
+        delta: 'Delta aktiviert: Zwischenspeicher geöffnet. Bitte tun Sie so, als sei das Absicht.',
+        beta: 'Beta aktiviert: Türmechanismus reagiert. Leider nur emotional.'
+      };
+
+      setCubeMessage(messages[plate] || 'Druckplatte aktiviert. Das System nickt vage.');
+    }
+
+    function renderCubeSequence() {
+      const names = {
+        alpha: 'Alpha',
+        beta: 'Beta',
+        gamma: 'Gamma',
+        delta: 'Delta',
+        epsilon: 'Epsilon'
+      };
+
+      const text = cubeSequence.length
+        ? cubeSequence.map(item => names[item]).join(' → ')
+        : '—';
+
+      document.getElementById('sequenceLog').textContent = 'Aktuelle Sequenz: ' + text;
+    }
+
+    function resetCubeSequence() {
+      cubeSequence.length = 0;
+      document.querySelectorAll('.plate').forEach(el => el.classList.remove('active'));
+      document.getElementById('googleTroll').style.display = 'none';
+      renderCubeSequence();
+      setCubeMessage('Sequenz zurückgesetzt. Der Würfel tut so, als sei nichts passiert. Sehr professionell.');
+    }
+
+    function checkCubeSequence() {
+      const correct = ['gamma', 'alpha', 'delta', 'beta'];
+      const result = document.getElementById('cubeResult');
+
+      if (cubeSequence.length !== correct.length) {
+        setCubeMessage('<span class="danger">Sequenz unvollständig.</span> Das System benötigt genau vier sinnvolle Schritte. Epsilon zählt aus pädagogischen Gründen nicht als sinnvoll.');
+        return;
+      }
+
+      const isCorrect = correct.every((value, index) => cubeSequence[index] === value);
+
+      if (isCorrect) {
+        setCubeMessage('<span class="success">Sequenz akzeptiert.</span> Erst geprüft, dann versorgt, dann gespeichert, dann geöffnet. Das System ist angenehm irritiert.');
+        result.style.display = 'block';
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        setCubeMessage('<span class="danger">Sequenz abgelehnt.</span> Das System schlägt vor, weniger zufällig und mehr absichtlich vorzugehen.');
+      }
+    }
+
+    function showCubeHint() {
+      cubeHintLevel += 1;
+      const hintBox = document.getElementById('cubeHintBox');
+      hintBox.style.display = 'block';
+
+      if (cubeHintLevel === 1) {
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Der Satz im Terminal ist die Reihenfolge: prüfen, versorgen, speichern, öffnen.';
+      } else if (cubeHintLevel === 2) {
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Ordnen Sie die Wörter den Funktionen der Druckplatten zu: Diagnose, Energie, Speicher, Tür.';
+      } else {
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> Die korrekte Sequenz lautet Gamma → Alpha → Delta → Beta.';
+      }
+    }
+
+    function openGoogle() {
+      window.open('https://www.google.de', '_blank', 'noopener,noreferrer');
+    }
+
+
+
+    const slidingMap = [
+      "########",
+      "#S..#E.#",
+      "#.#.#..#",
+      "#G..A#.#",
+      "#.##...#",
+      "#...D.B#",
+      "#.#.#..#",
+      "########"
+    ];
+
+    const plateNames = {
+      G: "Gamma",
+      A: "Alpha",
+      D: "Delta",
+      B: "Beta",
+      E: "Epsilon"
+    };
+
+    const plateToCode = {
+      G: "gamma",
+      A: "alpha",
+      D: "delta",
+      B: "beta",
+      E: "epsilon"
+    };
+
+    window.slidingCube = {
+      row: 1,
+      col: 1,
+      sequence: []
+    };
+
+    function renderSlidingGrid() {
+      const grid = document.getElementById('slidingGrid');
+      if (!grid) return;
+
+      grid.innerHTML = '';
+
+      for (let row = 0; row < slidingMap.length; row++) {
+        for (let col = 0; col < slidingMap[row].length; col++) {
+          const char = slidingMap[row][col];
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell';
+
+          if (char === '#') {
+            cell.classList.add('wall');
+            cell.textContent = '█';
+          } else if (char === 'S') {
+            cell.classList.add('start');
+            cell.textContent = 'Start';
+          } else if (char in plateNames) {
+            const code = plateToCode[char];
+            cell.classList.add('plate-' + code);
+            cell.textContent = plateNames[char];
+            if (window.slidingCube.sequence.includes(code)) {
+              cell.classList.add('activated');
+            }
+          } else {
+            cell.textContent = '';
+          }
+
+          if (window.slidingCube.row === row && window.slidingCube.col === col) {
+            cell.classList.add('cube-here');
+            cell.onclick = touchCube;
+          }
+
+          grid.appendChild(cell);
+        }
+      }
+
+      renderSlidingSequence();
+    }
+
+    function renderSlidingSequence() {
+      const sequenceBox = document.getElementById('slidingSequence');
+      if (!sequenceBox) return;
+
+      const names = {
+        gamma: "Gamma",
+        alpha: "Alpha",
+        delta: "Delta",
+        beta: "Beta",
+        epsilon: "Epsilon"
+      };
+
+      const text = window.slidingCube.sequence.length
+        ? window.slidingCube.sequence.map(item => names[item]).join(' → ')
+        : '—';
+
+      sequenceBox.textContent = 'Aktivierte Platten: ' + text;
+    }
+
+    function moveCube(direction) {
+      const directions = {
+        up: [-1, 0],
+        down: [1, 0],
+        left: [0, -1],
+        right: [0, 1]
+      };
+
+      const move = directions[direction];
+      if (!move) return;
+
+      let nextRow = window.slidingCube.row;
+      let nextCol = window.slidingCube.col;
+      let moved = false;
+
+      while (slidingMap[nextRow + move[0]][nextCol + move[1]] !== '#') {
+        nextRow += move[0];
+        nextCol += move[1];
+        moved = true;
+      }
+
+      if (!moved) {
+        setCubeMessage('Der Würfel stößt sofort gegen eine Wand. Das System nennt das „kurze Reise mit klarer Grenze“.');
+        return;
+      }
+
+      window.slidingCube.row = nextRow;
+      window.slidingCube.col = nextCol;
+
+      const landed = slidingMap[nextRow][nextCol];
+
+      if (landed in plateToCode) {
+        const code = plateToCode[landed];
+
+        if (code === 'epsilon') {
+          document.getElementById('googleTroll').style.display = 'block';
+          setCubeMessage('<span class="danger">Epsilon aktiviert.</span> Das System hat diese Landung als Hilferuf interpretiert.');
+        } else {
+          window.slidingCube.sequence.push(code);
+          setCubeMessage('Druckplatte ' + plateNames[landed] + ' aktiviert. Der Würfel behauptet, das sei komplett geplant gewesen.');
+        }
+      } else {
+        setCubeMessage('Der Würfel rutscht bis zum Stillstand. Keine Druckplatte aktiviert. Der Boden gibt sich unbeeindruckt.');
+      }
+
+      renderSlidingGrid();
+    }
+
+    function resetSlidingPuzzle() {
+      window.slidingCube.row = 1;
+      window.slidingCube.col = 1;
+      window.slidingCube.sequence = [];
+      document.getElementById('googleTroll').style.display = 'none';
+      document.getElementById('cubeResult').style.display = 'none';
+      renderSlidingGrid();
+      setCubeMessage('Würfel zurückgesetzt. Die Anlage tut so, als wäre das nie passiert.');
+    }
+
+    function checkSlidingSequence() {
+      const correct = ['gamma', 'alpha', 'delta', 'beta'];
+      const sequence = window.slidingCube.sequence;
+      const result = document.getElementById('cubeResult');
+
+      if (sequence.length !== correct.length) {
+        setCubeMessage('<span class="danger">Sequenz unvollständig.</span> Das System erwartet genau vier sinnvolle Druckplatten: prüfen, versorgen, speichern, öffnen.');
+        return;
+      }
+
+      const isCorrect = correct.every((value, index) => sequence[index] === value);
+
+      if (isCorrect) {
+        setCubeMessage('<span class="success">Sequenz akzeptiert.</span> Diagnose, Energie, Speicher, Tür. Der Würfel hat genug herumgerutscht.');
+        result.style.display = 'block';
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        setCubeMessage('<span class="danger">Sequenz abgelehnt.</span> Die Druckplatten wurden aktiviert, aber nicht in einer Reihenfolge, die der Anlage angenehm ist.');
+      }
+    }
+
+    function touchCube() {
+      cubeTouchCount += 1;
+
+      const messages = [
+        'Aus Gründen der Testleistung bitten wir Sie, den Kalibrierungswürfel nicht unnötig zu berühren.',
+        'Diese Bitte wurde offenbar als Einladung missverstanden.',
+        'Der Würfel ist kein Haustier.',
+        'Das System möchte betonen, dass wiederholtes Antippen keine wissenschaftlich anerkannte Methode ist.'
+      ];
+
+      if (cubeTouchCount <= 4) {
+        alert(messages[cubeTouchCount - 1]);
+      } else {
+        findCoin('cube');
+      }
+    }
+
+    function showCubeHint() {
+      cubeHintLevel += 1;
+      const hintBox = document.getElementById('cubeHintBox');
+      hintBox.style.display = 'block';
+
+      if (cubeHintLevel === 1) {
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Der Würfel rutscht immer bis zur nächsten Wand. Planen Sie also nicht das nächste Feld, sondern den nächsten Haltepunkt.';
+      } else if (cubeHintLevel === 2) {
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> In der Systemnotiz wurden vier griechische Buchstaben in normale Wörter geschmuggelt. Lesen Sie sie in der Reihenfolge ihres Auftauchens.';
+      } else if (cubeHintLevel === 3) {
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> γ → α → δ → β entspricht Gamma → Alpha → Delta → Beta.';
+      } else {
+        hintBox.innerHTML = '<strong>Bewegungshilfe:</strong> Vom Start aus erreicht man Gamma mit Rechts → Runter → Links. Danach geht es mit Rechts → Runter → Rechts weiter.';
+      }
+    }
+
+    function openGoogle() {
+      window.open('https://www.google.de', '_blank', 'noopener,noreferrer');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderSlidingGrid);
+
+
+    let laserHintLevel = 0;
+    let serviceMirrorClicks = 0;
+
+    const laserSectors = {
+      A: {
+        name: 'Sektor A // Anfang',
+        desc: 'Ein Verteilersektor. Der Strahl muss nach unten ausgeleitet werden, wenn Sie der stabilen Route folgen möchten.',
+        next: { up: 'B', down: 'C', right: 'D' },
+        desired: 'down',
+        mirrors: [
+          { r: 2, c: 1, type: '/', initial: '/', service: false },
+          { r: 0, c: 1, type: '/', initial: '/', service: false },
+          { r: 0, c: 4, type: '\\', initial: '\\', service: false },
+          { r: 3, c: 4, type: '/', initial: '/', service: false }
+        ],
+        blocks: []
+      },
+      C: {
+        name: 'Sektor C // Korrektur',
+        desc: 'Dieser Sektor korrigiert den Strahl. Mehrere Spiegel wirken wie eine Diskussion, nur mit mehr Brandgefahr.',
+        next: { up: 'A', down: 'D', right: 'E' },
+        desired: 'right',
+        mirrors: [
+          { r: 2, c: 1, type: '\\', initial: '\\', service: false },
+          { r: 4, c: 1, type: '\\', initial: '\\', service: false },
+          { r: 1, c: 3, type: '/', initial: '/', service: false },
+          { r: 3, c: 4, type: '\\', initial: '\\', service: false }
+        ],
+        blocks: [{r:2,c:5}]
+      },
+      E: {
+        name: 'Sektor E // Echo',
+        desc: 'Der Echoschnitt reagiert empfindlich. Der Strahl soll nach oben austreten, nachdem er unnötig dramatisch umgeleitet wurde.',
+        next: { up: 'B', down: 'A', right: 'D' },
+        desired: 'up',
+        mirrors: [
+          { r: 2, c: 2, type: '\\', initial: '\\', service: false },
+          { r: 4, c: 2, type: '\\', initial: '\\', service: false },
+          { r: 4, c: 4, type: '/', initial: '/', service: false },
+          { r: 1, c: 1, type: '/', initial: '/', service: false }
+        ],
+        blocks: []
+      },
+      B: {
+        name: 'Sektor B // Bündelung',
+        desc: 'Bündelung braucht Präzision. Und einen Service-Spiegel, den ganz bestimmt niemand dreimal anklicken sollte. Ziel ist hier der untere Ausgang nach Sektor D.',
+        next: { up: 'E', down: 'D', right: 'A' },
+        desired: 'down',
+        mirrors: [
+          { r: 2, c: 1, type: '/', initial: '/', service: false },
+          { r: 0, c: 1, type: '\\', initial: '\\', service: false },
+          { r: 0, c: 4, type: '\\', initial: '\\', service: false },
+          { r: 1, c: 2, type: '/', initial: '/', service: true },
+          { r: 3, c: 4, type: '/', initial: '/', service: false }
+        ],
+        blocks: []
+      },
+      D: {
+        name: 'Sektor D // Dämpfung',
+        desc: 'Der letzte Sektor dämpft die Strahlreste und gibt sie an das Kontrollterminal weiter. Ziel ist hier nicht mehr ein Ausgang, sondern der schwarze Terminal-Empfänger selbst.',
+        next: { up: 'C', down: 'A', right: 'TERMINAL' },
+        desired: 'receiver',
+        receiver: { r: 0, c: 3 },
+        mirrors: [
+          { r: 2, c: 1, type: '\\', initial: '\\', service: false },
+          { r: 4, c: 1, type: '\\', initial: '\\', service: false },
+          { r: 4, c: 3, type: '/', initial: '/', service: false },
+          { r: 0, c: 1, type: '/', initial: '/', service: false },
+          { r: 1, c: 4, type: '\\', initial: '\\', service: false },
+          { r: 3, c: 4, type: '\\', initial: '\\', service: false }
+        ],
+        blocks: []
+      }
+    };
+
+    const requiredLaserRoute = ['A', 'C', 'E', 'B', 'D', 'TERMINAL'];
+
+    window.laserState = {
+      current: 'A',
+      route: ['A'],
+      mirrors: {}
+    };
+
+    function initLaserMirrors() {
+      Object.entries(laserSectors).forEach(([key, sector]) => {
+        window.laserState.mirrors[key] = sector.mirrors.map(m => ({...m, type: m.initial}));
+      });
+    }
+
+    function setLaserMessage(text) {
+      const box = document.getElementById('laserMessage');
+      if (box) box.innerHTML = text;
+    }
+
+    function displayMirrorSymbol(symbol) {
+      return symbol === '\\' ? '\\' : '/';
+    }
+
+    function renderLaserSector() {
+      const sectorKey = window.laserState.current;
+      const sector = laserSectors[sectorKey];
+      const grid = document.getElementById('laserGrid');
+      if (!grid || !sector) return;
+
+      document.getElementById('sectorTitle').textContent = sector.name;
+      document.getElementById('sectorDescription').textContent = sector.desc;
+      document.getElementById('sectorBadge').textContent = 'Aktueller Sektor: ' + sectorKey;
+
+      grid.innerHTML = '';
+
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 6; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'laser-cell';
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+
+          const mirrorIndex = window.laserState.mirrors[sectorKey].findIndex(m => m.r === r && m.c === c);
+          const isBlock = sector.blocks.some(b => b.r === r && b.c === c);
+
+          const isReceiver = sector.receiver && sector.receiver.r === r && sector.receiver.c === c;
+
+          if (r === 2 && c === 0) {
+            cell.classList.add('entry');
+            cell.textContent = 'Start';
+          } else if (isReceiver) {
+            cell.classList.add('receiver');
+            cell.textContent = '■';
+          } else if (r === 0 && c === 5) {
+            cell.classList.add('exit');
+            cell.textContent = '↑';
+          } else if (r === 4 && c === 5) {
+            cell.classList.add('exit');
+            cell.textContent = '↓';
+          } else if (r === 2 && c === 5) {
+            cell.classList.add('exit');
+            cell.textContent = '→';
+          } else if (isBlock) {
+            cell.classList.add('blocker');
+            cell.textContent = '█';
+          } else if (mirrorIndex >= 0) {
+            const mirror = window.laserState.mirrors[sectorKey][mirrorIndex];
+            cell.classList.add('mirror');
+            if (mirror.service) cell.classList.add('service');
+            cell.textContent = displayMirrorSymbol(mirror.type);
+            cell.onclick = () => rotateLaserMirror(mirrorIndex);
+          }
+
+          grid.appendChild(cell);
+        }
+      }
+
+      renderSectorHistory();
+    }
+
+    function rotateLaserMirror(index) {
+      const sectorKey = window.laserState.current;
+      const mirror = window.laserState.mirrors[sectorKey][index];
+
+      if (mirror.service) {
+        serviceMirrorClicks += 1;
+        if (serviceMirrorClicks === 3) findCoin('serviceMirror');
+      }
+
+      mirror.type = mirror.type === '/' ? '\\' : '/';
+      setLaserMessage('Spiegel gedreht. Das System nennt diese Tätigkeit „optische Überzeugungsarbeit“.');
+      renderLaserSector();
+    }
+
+    function resetSectorMirrors() {
+      const sectorKey = window.laserState.current;
+      window.laserState.mirrors[sectorKey] = laserSectors[sectorKey].mirrors.map(m => ({...m, type: m.initial}));
+      setLaserMessage('Sektorspiegel zurückgesetzt. Der Strahl tut so, als hätte er nichts gesehen.');
+      renderLaserSector();
+    }
+
+    function resetLaserPuzzle() {
+      window.laserState.current = 'A';
+      window.laserState.route = ['A'];
+      initLaserMirrors();
+      document.getElementById('laserResult').style.display = 'none';
+      setLaserMessage('Gesamtroute zurückgesetzt. Das Kontrollterminal löscht die Peinlichkeit aus Kulanz.');
+      renderLaserSector();
+    }
+
+    function renderSectorHistory() {
+      const history = document.getElementById('sectorHistory');
+      if (history) history.textContent = 'Route: ' + window.laserState.route.join(' → ');
+
+      document.querySelectorAll('[data-sector-dot]').forEach(dot => {
+        const key = dot.dataset.sectorDot;
+        dot.classList.toggle('visited', window.laserState.route.includes(key));
+      });
+    }
+
+    function reflect(direction, mirrorType) {
+      const slash = { right: 'up', left: 'down', up: 'right', down: 'left' };
+      const backslash = { right: 'down', left: 'up', up: 'left', down: 'right' };
+      return mirrorType === '/' ? slash[direction] : backslash[direction];
+    }
+
+    function nextStep(pos, direction) {
+      const moves = { right: [0,1], left: [0,-1], up: [-1,0], down: [1,0] };
+      return { r: pos.r + moves[direction][0], c: pos.c + moves[direction][1] };
+    }
+
+    function traceLaser() {
+      const sectorKey = window.laserState.current;
+      const sector = laserSectors[sectorKey];
+      let pos = { r: 2, c: -1 };
+      let direction = 'right';
+      const path = [];
+      let safety = 0;
+
+      while (safety < 80) {
+        safety += 1;
+        pos = nextStep(pos, direction);
+
+        if (pos.r < 0) return { exit: 'up', path };
+        if (pos.r > 4) return { exit: 'down', path };
+        if (pos.c > 5) return { exit: 'right', path };
+        if (pos.c < 0) return { exit: 'left', path };
+
+        if (sector.receiver && sector.receiver.r === pos.r && sector.receiver.c === pos.c) {
+          path.push({ ...pos });
+          return { exit: 'receiver', path };
+        }
+
+        const isBlock = sector.blocks.some(b => b.r === pos.r && b.c === pos.c);
+        if (isBlock) return { exit: 'blocked', path };
+
+        path.push({ ...pos });
+
+        const mirror = window.laserState.mirrors[sectorKey].find(m => m.r === pos.r && m.c === pos.c);
+        if (mirror) direction = reflect(direction, mirror.type);
+      }
+
+      return { exit: 'loop', path };
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function fireLaser() {
+      const grid = document.getElementById('laserGrid');
+      if (!grid) return;
+
+      renderLaserSector();
+
+      const sectorKey = window.laserState.current;
+      const sector = laserSectors[sectorKey];
+      const result = traceLaser();
+
+      for (const step of result.path) {
+        const cell = grid.querySelector('[data-r="' + step.r + '"][data-c="' + step.c + '"]');
+        if (cell) cell.classList.add('beam');
+        await sleep(135);
+      }
+
+      if (result.exit === 'blocked') {
+        setLaserMessage('<span class="danger">Strahl blockiert.</span> Der Teststrahl hat eine Wand gefunden und ist nun beleidigt.');
+        return;
+      }
+
+      if (result.exit === 'loop') {
+        setLaserMessage('<span class="danger">Strahlschleife erkannt.</span> Das System ist kurzzeitig philosophisch geworden.');
+        return;
+      }
+
+      if (result.exit === 'receiver') {
+        if (sectorKey === 'D') {
+          window.laserState.route.push('TERMINAL');
+          renderSectorHistory();
+          setLaserMessage('<span class="success">Terminal-Empfänger getroffen.</span> Der schwarze Kern reagiert. Die Anlage klingt plötzlich sehr beeindruckt von Ihnen.');
+          checkLaserRoute();
+        } else {
+          setLaserMessage('<span class="danger">Empfänger getroffen.</span> Beeindruckend, aber dieser Sektor sollte noch keinen Empfänger besitzen.');
+        }
+        return;
+      }
+
+      if (sectorKey === 'D') {
+        setLaserMessage('<span class="danger">Empfänger verfehlt.</span> Im letzten Sektor zählt nur der schwarze Terminal-Empfänger. Ein normaler Ausgang reicht hier nicht.');
+        return;
+      }
+
+      const nextSector = sector.next[result.exit];
+
+      if (!nextSector) {
+        setLaserMessage('<span class="danger">Ungültiger Ausgang.</span> Der Strahl hat einen Weg gewählt, der in keiner Wartungsakte existiert.');
+        return;
+      }
+
+      if (nextSector === 'TERMINAL') {
+        window.laserState.route.push('TERMINAL');
+        renderSectorHistory();
+        checkLaserRoute();
+        return;
+      }
+
+      window.laserState.current = nextSector;
+      window.laserState.route.push(nextSector);
+      setLaserMessage('Strahl verlässt Sektor ' + sectorKey + ' über Ausgang ' + result.exit + '. Weiterleitung zu Sektor ' + nextSector + '.');
+      await sleep(420);
+      renderLaserSector();
+    }
+
+    function checkLaserRoute() {
+      const route = window.laserState.route;
+      const correct = requiredLaserRoute.length === route.length && requiredLaserRoute.every((v, i) => route[i] === v);
+
+      if (correct) {
+        setLaserMessage('<span class="success">Route akzeptiert.</span> Anfang, Korrektur, Echo, Bündelung, Dämpfung, Freigabe.');
+        document.getElementById('laserResult').style.display = 'block';
+        document.getElementById('laserResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        setLaserMessage('<span class="danger">Kontrollterminal verweigert Freigabe.</span> Die Sektoren wurden erreicht, aber nicht in der stabilen Reihenfolge.');
+      }
+    }
+
+    function showLaserHint() {
+      laserHintLevel += 1;
+      const hintBox = document.getElementById('laserHintBox');
+      hintBox.style.display = 'block';
+
+      if (laserHintLevel === 1) {
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Die Reihenfolge steht im Stabilitätsprotokoll: Anfang, Korrektur, Echo, Bündelung, Dämpfung.';
+      } else if (laserHintLevel === 2) {
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Die Zielroute lautet A → C → E → B → D → Freigabe.';
+      } else if (laserHintLevel === 3) {
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> Ein Ausgang nach oben, unten oder rechts führt je nach Sektor woanders hin. Beobachten Sie nach jedem Senden die Route.';
+      } else {
+        hintBox.innerHTML = '<strong>Spiegelhilfe:</strong> Die gewünschten Ziele sind: A unten, C rechts, E oben, B unten und in D der schwarze Empfänger. In D geht der korrekte Weg erst nach unten, dann nach rechts, dann nach oben in den Kern.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initLaserMirrors();
+      renderLaserSector();
+    });
+
+
+    let coreSeconds = 120;
+    let coreTimerInterval = null;
+    let addTimePresses = 0;
+    let coreRunning = false;
+    let lastCoreWarning = null;
+
+    function startCore() {
+      document.getElementById('coreIntro').style.display = 'none';
+      document.getElementById('coreFailure').style.display = 'none';
+      document.getElementById('coreSuccess').style.display = 'none';
+      document.getElementById('coreGame').style.display = 'block';
+
+      coreSeconds = 120;
+      addTimePresses = 0;
+      coreRunning = true;
+      lastCoreWarning = null;
+
+      document.getElementById('coreStep1').style.display = 'block';
+      document.getElementById('coreStep2').style.display = 'none';
+      document.getElementById('coreStep3').style.display = 'none';
+      document.getElementById('coreMessage').innerHTML = 'Systemkern bereit. Der Timer läuft. Das ist vermutlich Absicht.';
+
+      const addButton = document.getElementById('addTimeButton');
+      addButton.disabled = false;
+      addButton.classList.remove('broken');
+      addButton.textContent = '+5 Sekunden hinzufügen';
+
+      ['coreA','coreB','coreC','coreD','coreE','coreF','coreG','coreH','pairAB','pairCD','pairEF','pairGH','finalCoreCode'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      updateCoreTimer();
+      if (coreTimerInterval) clearInterval(coreTimerInterval);
+      coreTimerInterval = setInterval(tickCoreTimer, 1000);
+    }
+
+    function tickCoreTimer() {
+      if (!coreRunning) return;
+      coreSeconds -= 1;
+      updateCoreTimer();
+      maybeCoreWarning();
+
+      if (coreSeconds <= 0) {
+        failCore();
+      }
+    }
+
+    function updateCoreTimer() {
+      const minutes = Math.floor(coreSeconds / 60);
+      const seconds = Math.max(0, coreSeconds % 60);
+      const timer = document.getElementById('coreTimer');
+      if (timer) timer.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+    }
+
+    function setCoreMessage(text) {
+      const box = document.getElementById('coreMessage');
+      if (box) box.innerHTML = text;
+    }
+
+    function maybeCoreWarning() {
+      const warnings = {
+        90: 'Systemkern instabil. Das ist keine Drohung, nur eine sehr nervöse Statusmeldung.',
+        60: 'Bitte lösen Sie schneller. Die Anlage wird unhöflich.',
+        30: 'Dramatische Musik wäre jetzt angemessen.',
+        10: 'Zehn Sekunden. Keine Panik. Das war eine Anweisung, keine Feststellung.'
+      };
+
+      if (warnings[coreSeconds] && lastCoreWarning !== coreSeconds) {
+        lastCoreWarning = coreSeconds;
+        setCoreMessage('<span class="danger">' + warnings[coreSeconds] + '</span>');
+      }
+    }
+
+    function addCoreTime() {
+      const button = document.getElementById('addTimeButton');
+      if (!coreRunning || button.disabled) return;
+
+      addTimePresses += 1;
+
+      if (addTimePresses <= 2) {
+        coreSeconds += 5;
+        updateCoreTimer();
+        setCoreMessage('Zeitverlängerung akzeptiert: +5 Sekunden. Das System bereut diese Funktion bereits.');
+      } else {
+        coreSeconds += 5;
+        updateCoreTimer();
+        button.classList.add('broken');
+        button.disabled = true;
+        button.textContent = 'KNOPF DEFEKT';
+        setCoreMessage('<span class="success">Testmünze gefunden.</span> Dabei auch den Zeitverlängerungsknopf kaputtgemacht. Toll gemacht.');
+        findCoin('addTime');
+      }
+    }
+
+    function verifyCoreValues() {
+      const expected = ['4','7','2','9','1','6','8','3'];
+      const ids = ['coreA','coreB','coreC','coreD','coreE','coreF','coreG','coreH'];
+      const values = ids.map(id => document.getElementById(id).value.trim());
+
+      if (expected.every((v, i) => values[i] === v)) {
+        document.getElementById('coreStep1').style.display = 'none';
+        document.getElementById('coreStep2').style.display = 'block';
+        setCoreMessage('<span class="success">Einzelwerte akzeptiert.</span> Das System hat sich entschieden, daraus etwas unnötig Größeres zu machen.');
+      } else {
+        setCoreMessage('<span class="danger">Einzelwerte abgelehnt.</span> Mindestens ein Wert sieht verdächtig falsch aus. Die Anlage urteilt leise.');
+      }
+    }
+
+    function verifyCorePairs() {
+      const expected = ['47','29','16','83'];
+      const ids = ['pairAB','pairCD','pairEF','pairGH'];
+      const values = ids.map(id => document.getElementById(id).value.trim());
+
+      if (expected.every((v, i) => values[i] === v)) {
+        document.getElementById('coreStep2').style.display = 'none';
+        document.getElementById('coreStep3').style.display = 'block';
+        setCoreMessage('<span class="success">Kammerpaare akzeptiert.</span> Die letzte Kammer hält den ersten Schlüssel.');
+      } else {
+        setCoreMessage('<span class="danger">Kammerpaare abgelehnt.</span> Die Anlage erinnert daran, dass Paare aus zwei Dingen bestehen. Meistens.');
+      }
+    }
+
+    function verifyFinalCoreCode() {
+      const code = document.getElementById('finalCoreCode').value.trim();
+
+      if (code === '83162947') {
+        succeedCore();
+      } else {
+        setCoreMessage('<span class="danger">Freigabecode abgelehnt.</span> Der Kern öffnet in umgekehrter Kammerreihenfolge.');
+      }
+    }
+
+    function failCore() {
+      coreRunning = false;
+      if (coreTimerInterval) clearInterval(coreTimerInterval);
+      document.getElementById('coreGame').style.display = 'none';
+      document.getElementById('coreFailure').style.display = 'block';
+    }
+
+    function resetCore() {
+      startCore();
+    }
+
+    function succeedCore() {
+      coreRunning = false;
+      if (coreTimerInterval) clearInterval(coreTimerInterval);
+      document.getElementById('coreGame').style.display = 'none';
+      document.getElementById('coreSuccess').style.display = 'block';
+      updateBonusUnlock();
+      document.getElementById('coreSuccess').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+
+    function updateBonusUnlock() {
+      const locked = document.getElementById('bonusLockedNotice');
+      const unlocked = document.getElementById('bonusUnlockedNotice');
+      const button = document.getElementById('bonusStartButton');
+
+      if (!locked || !unlocked || !button) return;
+
+      if (foundCoins.size >= 7) {
+        locked.style.display = 'none';
+        unlocked.style.display = 'block';
+        button.disabled = false;
+      } else {
+        locked.style.display = 'block';
+        unlocked.style.display = 'none';
+        button.disabled = true;
+      }
+    }
+
+    function openBonusChambers() {
+      if (foundCoins.size < 7) {
+        alert('Bonusprotokoll gesperrt.\n\nEs werden alle 7 Testmünzen benötigt. Das System empfiehlt rückwirkende Neugier.');
+        updateBonusUnlock();
+        return;
+      }
+
+      showScreen('bonus1');
+    }
+
   </script>
 </body>
 </html>
