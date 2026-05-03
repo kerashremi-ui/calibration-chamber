@@ -2198,6 +2198,8 @@
       soundEnabled = !soundEnabled;
       const button = document.getElementById('soundToggle');
       if (button) button.textContent = 'Sound: ' + (soundEnabled ? 'an' : 'aus');
+      const status = document.getElementById('soundStatus');
+      if (status) status.textContent = soundEnabled ? 'Soundeffekte aktiv.' : 'Soundeffekte deaktiviert.';
       if (soundEnabled) setTimeout(() => playSound('click'), 80);
     }
 
@@ -2270,23 +2272,27 @@
     }
 
     function setMessage(text) {
-      const box = document.getElementById('messageBox');
-      if (box) box.innerHTML = text;
+      facilityMessage('messageBox', text);
     }
 
     function setRiftMessage(text) {
-      const box = document.getElementById('riftMessage');
-      if (box) box.innerHTML = text;
+      facilityMessage('riftMessage', text);
     }
 
     function updateCoinCounter() {
-      document.getElementById('coinCounter').textContent = 'Testmünzen: ' + foundCoins.size + ' / 7';
+      const counter = document.getElementById('coinCounter');
+      if (counter) {
+        counter.textContent = 'Testmünzen: ' + foundCoins.size + ' / 7';
+        animateElement('coinCounter', 'coin-pop');
+      }
       updateBonusUnlock();
     }
 
     function findCoin(id) {
       if (foundCoins.has(id)) return;
       foundCoins.add(id);
+      playSound('coin');
+      setTimeout(() => playSound('coin'), 180);
       updateCoinCounter();
 
       if (id === 'logo') {
