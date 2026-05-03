@@ -171,6 +171,13 @@
       background: linear-gradient(180deg, #173815, #101c10);
     }
 
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
     .room {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -298,6 +305,140 @@
       padding-top: 16px;
     }
 
+    .rift-layout {
+      display: grid;
+      grid-template-columns: minmax(220px, .8fr) minmax(300px, 1.2fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .rift-tray, .rift-board {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+    }
+
+    .rift-core {
+      user-select: none;
+      border-radius: 18px;
+      padding: 14px;
+      margin: 12px 0;
+      font-weight: bold;
+      text-align: center;
+      cursor: grab;
+      border: 1px solid var(--border);
+      background: #090d12;
+    }
+
+    .rift-core:active { cursor: grabbing; }
+
+    .rift-core.red {
+      color: var(--red);
+      border-color: rgba(255,75,53,.65);
+      box-shadow: 0 0 18px rgba(255,75,53,.16);
+    }
+
+    .rift-core.green {
+      color: var(--green);
+      border-color: rgba(99,255,90,.65);
+      box-shadow: 0 0 18px rgba(99,255,90,.14);
+    }
+
+    .selected-core {
+      outline: 3px solid rgba(255,255,255,.24);
+      transform: translateY(-1px);
+    }
+
+    .node-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .wall-node {
+      min-height: 156px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.06), transparent),
+        #111821;
+      position: relative;
+      padding: 34px 14px 14px;
+      text-align: center;
+      transition: border-color 120ms ease, transform 120ms ease;
+    }
+
+    .wall-node.drag-over {
+      border-color: rgba(99,255,90,.75);
+      transform: translateY(-1px);
+    }
+
+    .wall-node .node-title {
+      color: var(--text);
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .wall-node .node-sub {
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+
+    .screw {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.42);
+      position: absolute;
+      box-shadow: inset 0 0 4px rgba(0,0,0,.55);
+    }
+
+    .screw.tl { top: 12px; left: 12px; }
+    .screw.tr { top: 12px; right: 12px; }
+    .screw.bl { bottom: 12px; left: 12px; }
+    .screw.br { bottom: 12px; right: 12px; }
+
+    .screw-hole {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255,255,255,.36);
+      background: rgba(0,0,0,.4);
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      cursor: pointer;
+    }
+
+    .screw-hole:hover {
+      border-color: var(--red);
+      box-shadow: 0 0 14px rgba(255,75,53,.4);
+    }
+
+    .placed-core {
+      margin: 12px auto 0;
+      width: fit-content;
+      max-width: 100%;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: bold;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.3);
+    }
+
+    .placed-core.red { color: var(--red); border-color: rgba(255,75,53,.55); }
+    .placed-core.green { color: var(--green); border-color: rgba(99,255,90,.55); }
+
+    .rift-help {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -308,7 +449,7 @@
       main { padding: 20px; }
       .topbar { align-items: flex-start; flex-direction: column; }
       .status { text-align: left; }
-      .room, .panel-grid { grid-template-columns: 1fr; }
+      .room, .panel-grid, .rift-layout, .node-grid { grid-template-columns: 1fr; }
       .object { min-height: auto; }
       h1 { letter-spacing: .04em; }
     }
@@ -324,7 +465,7 @@
       </div>
       <div>
         <div class="status" id="status">Status: Testsubjekt eingeschlossen</div>
-        <div class="coin-counter" id="coinCounter">Calibration Coins: 0 / 3</div>
+        <div class="coin-counter" id="coinCounter">Calibration Coins: 0 / 4</div>
       </div>
     </header>
 
@@ -449,13 +590,101 @@
             <div class="value-card">B = 7</div>
           </div>
           <div class="actions">
-            <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 02</button>
+            <button class="blue" onclick="showScreen('chamber2')">Weiter zu Kammer 02</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="chamber2" class="screen">
+        <h2>Kammer 02 // Raumspalt-Kalibrierung</h2>
+        <p>
+          Zwei instabile Raumspalt-Kerne müssen an den richtigen Wandknoten befestigt werden.
+          Ziehen Sie die Kerne auf die Knoten. Auf dem Handy können Sie einen Kern antippen und danach den Zielknoten antippen.
+        </p>
+
+        <div class="terminal">
+          <p><strong>Kalibrierungsregeln:</strong></p>
+          <p>1. Der rote Kern gehört tiefer als der grüne Kern.</p>
+          <p>2. Der grüne Kern liegt weiter rechts als der rote Kern.</p>
+          <p>3. Der rote Kern berührt die Startmarkierung.</p>
+          <p>4. Der grüne Kern liegt diagonal gegenüber dem roten Kern.</p>
+          <p>Das System weist darauf hin, dass Schrauben theoretisch wichtig sind. Praktisch wird das später entschieden.</p>
+        </div>
+
+        <div class="rift-layout">
+          <div class="rift-tray" id="riftTray">
+            <h3>Instabile Kerne</h3>
+            <div id="redCore" class="rift-core red" draggable="true" data-core="red" onclick="selectCore('red')">Roter Raumspalt-Kern</div>
+            <div id="greenCore" class="rift-core green" draggable="true" data-core="green" onclick="selectCore('green')">Grüner Raumspalt-Kern</div>
+            <p class="rift-help">
+              Tipp: Ziehen und ablegen. Falls Ihr Browser das nicht mag: Kern antippen, dann Wandknoten antippen.
+            </p>
+            <div class="actions">
+              <button onclick="resetRifts()">Raumspalten zurücksetzen</button>
+              <button onclick="showRiftHint()">Hinweis anfordern</button>
+            </div>
+          </div>
+
+          <div class="rift-board">
+            <h3>Wandknoten</h3>
+            <div class="node-grid">
+              <div class="wall-node" data-node="A" onclick="nodeClicked('A')">
+                <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+                <span class="node-title">Knoten A</span>
+                <span class="node-sub">oben links // ruhig</span>
+                <div class="slot" id="slot-A"></div>
+              </div>
+
+              <div class="wall-node suspicious" data-node="B" onclick="nodeClicked('B')">
+                <span class="screw tl"></span><span class="screw bl"></span><span class="screw br"></span>
+                <span class="screw-hole" title="fehlende Schraube" onclick="event.stopPropagation(); findCoin('screwHole');"></span>
+                <span class="node-title">Knoten B</span>
+                <span class="node-sub">oben rechts // leicht beleidigt</span>
+                <div class="slot" id="slot-B"></div>
+              </div>
+
+              <div class="wall-node" data-node="C" onclick="nodeClicked('C')">
+                <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+                <span class="node-title">Knoten C</span>
+                <span class="node-sub">unten links // Startmarkierung</span>
+                <div class="slot" id="slot-C"></div>
+              </div>
+
+              <div class="wall-node" data-node="D" onclick="nodeClicked('D')">
+                <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+                <span class="node-title">Knoten D</span>
+                <span class="node-sub">unten rechts // summt verdächtig</span>
+                <div class="slot" id="slot-D"></div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" onclick="checkRifts()">Kalibrierung prüfen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="message-box" id="riftMessage">
+          Raumspalt-System bereit. Bitte befestigen Sie die Kerne nicht an Menschen, Tieren oder emotional instabilen Wandknoten.
+        </div>
+
+        <div id="riftHintBox" class="message-box" style="display:none;"></div>
+
+        <div id="riftResult" class="terminal" style="display:none;">
+          <p class="success">Kammer 02 abgeschlossen.</p>
+          <p>Raumspalt-Kalibrierung stabil. Die Physik ist enttäuscht, aber kooperiert.</p>
+          <div class="values">
+            <div class="value-card">C = 2</div>
+            <div class="value-card">D = 9</div>
+          </div>
+          <div class="actions">
+            <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 03</button>
           </div>
         </div>
       </section>
 
       <section id="placeholder" class="screen">
-        <h2>Kammer 02 // Raumspalt-Test</h2>
+        <h2>Kammer 03 // Kalibrierungswürfel</h2>
         <div class="terminal">
           <p><strong>Status:</strong> noch nicht rekonstruiert</p>
           <p>
@@ -466,11 +695,13 @@
         <div class="values">
           <div class="value-card">A = 4</div>
           <div class="value-card">B = 7</div>
-          <div class="value-card">C = ?</div>
-          <div class="value-card">D = ?</div>
+          <div class="value-card">C = 2</div>
+          <div class="value-card">D = 9</div>
+          <div class="value-card">E = ?</div>
+          <div class="value-card">F = ?</div>
         </div>
         <div class="actions">
-          <button onclick="showScreen('chamber1')">Zurück zu Kammer 01</button>
+          <button onclick="showScreen('chamber2')">Zurück zu Kammer 02</button>
           <button onclick="showScreen('intro')">Archiv verlassen</button>
         </div>
       </section>
@@ -479,7 +710,10 @@
 
   <script>
     let hintLevel = 0;
+    let riftHintLevel = 0;
+    let selectedCore = null;
     const foundCoins = new Set();
+    const riftPositions = { red: null, green: null };
 
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(screen => {
@@ -490,7 +724,8 @@
       const status = document.getElementById('status');
       if (id === 'intro') status.textContent = 'Status: Testsubjekt eingeschlossen';
       if (id === 'chamber1') status.textContent = 'Status: Kammer 01 aktiv';
-      if (id === 'placeholder') status.textContent = 'Status: Kammer 02 ausstehend';
+      if (id === 'chamber2') status.textContent = 'Status: Kammer 02 aktiv';
+      if (id === 'placeholder') status.textContent = 'Status: Kammer 03 ausstehend';
     }
 
     function setMessage(text) {
@@ -498,16 +733,27 @@
       if (box) box.innerHTML = text;
     }
 
+    function setRiftMessage(text) {
+      const box = document.getElementById('riftMessage');
+      if (box) box.innerHTML = text;
+    }
+
+    function updateCoinCounter() {
+      document.getElementById('coinCounter').textContent = 'Calibration Coins: ' + foundCoins.size + ' / 4';
+    }
+
     function findCoin(id) {
       if (foundCoins.has(id)) return;
       foundCoins.add(id);
-      document.getElementById('coinCounter').textContent = 'Calibration Coins: ' + foundCoins.size + ' / 3';
+      updateCoinCounter();
 
       if (id === 'logo') {
         alert('Calibration Coin gefunden. Das System ist widerwillig beeindruckt.');
+      } else if (id === 'screwHole') {
+        alert('Calibration Coin gefunden.\n\nIm leeren Schraubenloch steckt eine kleine Kalibrierungsmarke.\nDas System nennt es „versteckte Qualitätskontrolle“. Die Wartungsabteilung nennt es „nicht unser Problem“.');
       }
 
-      if (foundCoins.size === 3) {
+      if (foundCoins.size === 4) {
         alert('Bonusarchiv freigeschaltet. In einer späteren Version wartet hier ein geheimes Extra.');
       }
     }
@@ -562,6 +808,111 @@
         hintBox.innerHTML = '<strong>Hinweis 2:</strong> Paneel 1 sagt: „A ist nicht 4.“ Wenn das gelogen ist, bleibt nur eine Möglichkeit.';
       } else {
         hintBox.innerHTML = '<strong>Hinweis 3:</strong> A ist 4. Dadurch ist nur Paneel 3 wahr.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.rift-core').forEach(core => {
+        core.addEventListener('dragstart', event => {
+          event.dataTransfer.setData('text/plain', core.dataset.core);
+        });
+      });
+
+      document.querySelectorAll('.wall-node').forEach(node => {
+        node.addEventListener('dragover', event => {
+          event.preventDefault();
+          node.classList.add('drag-over');
+        });
+
+        node.addEventListener('dragleave', () => {
+          node.classList.remove('drag-over');
+        });
+
+        node.addEventListener('drop', event => {
+          event.preventDefault();
+          node.classList.remove('drag-over');
+          const core = event.dataTransfer.getData('text/plain');
+          placeCore(core, node.dataset.node);
+        });
+      });
+    });
+
+    function selectCore(core) {
+      selectedCore = core;
+      document.querySelectorAll('.rift-core').forEach(el => el.classList.remove('selected-core'));
+      document.getElementById(core + 'Core').classList.add('selected-core');
+      setRiftMessage((core === 'red' ? 'Roter' : 'Grüner') + ' Kern ausgewählt. Wählen Sie nun einen Wandknoten. Das System nennt dies „Berührungssimulation für Browser mit Launen“.');
+    }
+
+    function nodeClicked(node) {
+      if (!selectedCore) return;
+      placeCore(selectedCore, node);
+      selectedCore = null;
+      document.querySelectorAll('.rift-core').forEach(el => el.classList.remove('selected-core'));
+    }
+
+    function placeCore(core, node) {
+      if (!core || !node) return;
+
+      Object.keys(riftPositions).forEach(key => {
+        if (riftPositions[key] === node) {
+          riftPositions[key] = null;
+        }
+      });
+
+      riftPositions[core] = node;
+      renderRifts();
+
+      const coreName = core === 'red' ? 'Roter Kern' : 'Grüner Kern';
+      setRiftMessage(coreName + ' an Knoten ' + node + ' befestigt. Die Wand hat nicht zugestimmt, kooperiert aber vorläufig.');
+    }
+
+    function renderRifts() {
+      document.querySelectorAll('.slot').forEach(slot => slot.innerHTML = '');
+
+      Object.entries(riftPositions).forEach(([core, node]) => {
+        if (!node) return;
+        const marker = document.createElement('div');
+        marker.className = 'placed-core ' + core;
+        marker.textContent = core === 'red' ? 'ROT AKTIV' : 'GRÜN AKTIV';
+        document.getElementById('slot-' + node).appendChild(marker);
+      });
+    }
+
+    function resetRifts() {
+      riftPositions.red = null;
+      riftPositions.green = null;
+      selectedCore = null;
+      document.querySelectorAll('.rift-core').forEach(el => el.classList.remove('selected-core'));
+      renderRifts();
+      setRiftMessage('Raumspalten zurückgesetzt. Die Physik nutzt die Gelegenheit für eine kurze Beschwerde.');
+    }
+
+    function checkRifts() {
+      const result = document.getElementById('riftResult');
+
+      if (riftPositions.red === 'C' && riftPositions.green === 'B') {
+        setRiftMessage('<span class="success">Kalibrierung akzeptiert.</span> Rot berührt die Startmarkierung, Grün liegt diagonal gegenüber. Das System ist zufrieden und etwas überrascht.');
+        result.style.display = 'block';
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else if (!riftPositions.red || !riftPositions.green) {
+        setRiftMessage('<span class="danger">Kalibrierung unvollständig.</span> Mindestens ein Raumspalt-Kern treibt noch orientierungslos herum.');
+      } else {
+        setRiftMessage('<span class="danger">Kalibrierung instabil.</span> Ein leises Knacken in der Wand deutet darauf hin, dass dies nicht die bevorzugte Lösung war.');
+      }
+    }
+
+    function showRiftHint() {
+      riftHintLevel += 1;
+      const hintBox = document.getElementById('riftHintBox');
+      hintBox.style.display = 'block';
+
+      if (riftHintLevel === 1) {
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> „Tiefer als“ bedeutet: Der rote Kern gehört in die untere Reihe.';
+      } else if (riftHintLevel === 2) {
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Der rote Kern berührt die Startmarkierung. Suchen Sie nach dem Knoten, der so beschriftet ist.';
+      } else {
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> Rot gehört auf Knoten C. Grün liegt diagonal gegenüber, also auf Knoten B.';
       }
     }
   </script>
