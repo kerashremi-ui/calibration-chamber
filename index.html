@@ -1366,6 +1366,113 @@
     }
   </style>
 
+
+  <style>
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .audio-controls button {
+      padding: 8px 11px;
+      font-size: .82rem;
+      border-radius: 12px;
+    }
+
+    .sound-status {
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .pulse-success {
+      animation: pulseSuccess 850ms ease;
+    }
+
+    .shake-error {
+      animation: shakeError 420ms ease;
+    }
+
+    .coin-pop {
+      animation: coinPop 700ms ease;
+    }
+
+    .terminal-flicker {
+      animation: terminalFlicker 900ms ease;
+    }
+
+    .screen.active {
+      animation: screenBoot 420ms ease;
+    }
+
+    .laser-cell.beam {
+      animation: beamGlow 650ms ease infinite alternate;
+    }
+
+    .core-timer.warning {
+      animation: timerWarning 600ms ease infinite alternate;
+    }
+
+    @keyframes pulseSuccess {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(99,255,90,0); }
+      45% { transform: scale(1.015); box-shadow: 0 0 26px rgba(99,255,90,.20); }
+      100% { transform: scale(1); box-shadow: 0 0 0 rgba(99,255,90,0); }
+    }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+    @keyframes coinPop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.12) rotate(-1deg); }
+      70% { transform: scale(.98) rotate(1deg); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes terminalFlicker {
+      0%, 100% { opacity: 1; filter: brightness(1); }
+      12% { opacity: .72; filter: brightness(1.35); }
+      22% { opacity: 1; filter: brightness(.92); }
+      32% { opacity: .82; filter: brightness(1.22); }
+      45% { opacity: 1; filter: brightness(1); }
+    }
+
+    @keyframes screenBoot {
+      0% { opacity: .25; transform: translateY(8px); filter: blur(2px); }
+      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @keyframes beamGlow {
+      from { box-shadow: 0 0 14px rgba(255,75,53,.20); }
+      to { box-shadow: 0 0 30px rgba(255,75,53,.45); }
+    }
+
+    @keyframes timerWarning {
+      from { text-shadow: 0 0 12px rgba(255,75,53,.28); transform: scale(1); }
+      to { text-shadow: 0 0 30px rgba(255,75,53,.62); transform: scale(1.015); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pulse-success,
+      .shake-error,
+      .coin-pop,
+      .terminal-flicker,
+      .screen.active,
+      .laser-cell.beam,
+      .core-timer.warning {
+        animation: none !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -2027,10 +2134,95 @@
     let cubeTouchCount = 0;
     let selectedCore = null;
     const cubeSequence = [];
+
+    let soundEnabled = false;
+    let musicEnabled = false;
+    let audioUnlocked = false;
+
+    const audioFiles = {
+      click: 'audio/click.mp3',
+      success: 'audio/success.mp3',
+      error: 'audio/error.mp3',
+      coin: 'audio/coin.mp3',
+      laser: 'audio/laser.mp3',
+      timer: 'audio/timer-warning.mp3',
+      buttonBreak: 'audio/button-break.mp3',
+      ambience: 'audio/ambience.mp3'
+    };
+
+    const sfx = {};
+    Object.entries(audioFiles).forEach(([key, src]) => {
+      const audio = new Audio(src);
+      audio.preload = 'auto';
+      if (key === 'ambience') {
+        audio.loop = true;
+        audio.volume = 0.22;
+      } else {
+        audio.volume = 0.55;
+      }
+      sfx[key] = audio;
+    });
+
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+      const status = document.getElementById('soundStatus');
+      if (status) status.textContent = 'Audio bereit. Dateien können später ergänzt werden.';
+    }
+
+    function playSound(name) {
+      unlockAudio();
+      if (!soundEnabled) return;
+      const audio = sfx[name];
+      if (!audio) return;
+
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      unlockAudio();
+      soundEnabled = !soundEnabled;
+      const button = document.getElementById('soundToggle');
+      if (button) button.textContent = 'Sound: ' + (soundEnabled ? 'an' : 'aus');
+      playSound('click');
+    }
+
+    function toggleMusic() {
+      unlockAudio();
+      musicEnabled = !musicEnabled;
+      const button = document.getElementById('musicToggle');
+      if (button) button.textContent = 'Musik: ' + (musicEnabled ? 'an' : 'aus');
+
+      const ambience = sfx.ambience;
+      if (!ambience) return;
+
+      try {
+        if (musicEnabled) {
+          ambience.play().catch(() => {});
+        } else {
+          ambience.pause();
+        }
+      } catch (e) {}
+    }
+
+    function animateElement(id, className) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove(className);
+      void el.offsetWidth;
+      el.classList.add(className);
+      setTimeout(() => el.classList.remove(className), 950);
+    }
+
+    document.addEventListener('click', unlockAudio, { once: true });
     const foundCoins = new Set();
     const riftPositions = { red: null, green: null };
 
     function showScreen(id) {
+      playSound('click');
       document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
       });
@@ -2248,7 +2440,19 @@
 
     function setCubeMessage(text) {
       const box = document.getElementById('cubeMessage');
-      if (box) box.innerHTML = text;
+      if (box) {
+        box.innerHTML = text;
+        if (String(text).includes('success')) {
+          playSound('success');
+          animateElement('cubeMessage', 'pulse-success');
+        } else if (String(text).includes('danger')) {
+          playSound('error');
+          animateElement('cubeMessage', 'shake-error');
+        } else {
+          box.classList.add('terminal-flicker');
+          setTimeout(() => box.classList.remove('terminal-flicker'), 950);
+        }
+      }
     }
 
     function touchCube() {
@@ -2659,7 +2863,19 @@
 
     function setLaserMessage(text) {
       const box = document.getElementById('laserMessage');
-      if (box) box.innerHTML = text;
+      if (box) {
+        box.innerHTML = text;
+        if (String(text).includes('success')) {
+          playSound('success');
+          animateElement('laserMessage', 'pulse-success');
+        } else if (String(text).includes('danger')) {
+          playSound('error');
+          animateElement('laserMessage', 'shake-error');
+        } else {
+          box.classList.add('terminal-flicker');
+          setTimeout(() => box.classList.remove('terminal-flicker'), 950);
+        }
+      }
     }
 
     function displayMirrorSymbol(symbol) {
@@ -2813,6 +3029,7 @@
     }
 
     async function fireLaser() {
+      playSound('laser');
       const grid = document.getElementById('laserGrid');
       if (!grid) return;
 
@@ -2968,7 +3185,19 @@
 
     function setCoreMessage(text) {
       const box = document.getElementById('coreMessage');
-      if (box) box.innerHTML = text;
+      if (box) {
+        box.innerHTML = text;
+        if (String(text).includes('success')) {
+          playSound('success');
+          animateElement('coreMessage', 'pulse-success');
+        } else if (String(text).includes('danger')) {
+          playSound('error');
+          animateElement('coreMessage', 'shake-error');
+        } else {
+          box.classList.add('terminal-flicker');
+          setTimeout(() => box.classList.remove('terminal-flicker'), 950);
+        }
+      }
     }
 
     function maybeCoreWarning() {
@@ -2981,6 +3210,9 @@
 
       if (warnings[coreSeconds] && lastCoreWarning !== coreSeconds) {
         lastCoreWarning = coreSeconds;
+        playSound('timer');
+        const timerEl = document.getElementById('coreTimer');
+        if (timerEl) timerEl.classList.add('warning');
         setCoreMessage('<span class="danger">' + warnings[coreSeconds] + '</span>');
       }
     }
@@ -2998,6 +3230,7 @@
       } else {
         coreSeconds += 5;
         updateCoreTimer();
+        playSound('buttonBreak');
         button.classList.add('broken');
         button.disabled = true;
         button.textContent = 'KNOPF DEFEKT';
@@ -3046,6 +3279,8 @@
 
     function failCore() {
       coreRunning = false;
+      const timerEl = document.getElementById('coreTimer');
+      if (timerEl) timerEl.classList.remove('warning');
       if (coreTimerInterval) clearInterval(coreTimerInterval);
       document.getElementById('coreGame').style.display = 'none';
       document.getElementById('coreFailure').style.display = 'block';
@@ -3057,6 +3292,8 @@
 
     function succeedCore() {
       coreRunning = false;
+      const timerEl = document.getElementById('coreTimer');
+      if (timerEl) timerEl.classList.remove('warning');
       if (coreTimerInterval) clearInterval(coreTimerInterval);
       document.getElementById('coreGame').style.display = 'none';
       document.getElementById('coreSuccess').style.display = 'block';
@@ -3293,7 +3530,19 @@
 
     function setReleaseMessage(text) {
       const box = document.getElementById('releaseMessage');
-      if (box) box.innerHTML = text;
+      if (box) {
+        box.innerHTML = text;
+        if (String(text).includes('success')) {
+          playSound('success');
+          animateElement('releaseMessage', 'pulse-success');
+        } else if (String(text).includes('danger')) {
+          playSound('error');
+          animateElement('releaseMessage', 'shake-error');
+        } else {
+          box.classList.add('terminal-flicker');
+          setTimeout(() => box.classList.remove('terminal-flicker'), 950);
+        }
+      }
     }
 
     function checkReleaseProtocol() {
@@ -3346,6 +3595,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', initReleaseProtocol);
+
+
+    document.addEventListener('click', (event) => {
+      if (event.target && event.target.closest && event.target.closest('button')) {
+        playSound('click');
+      }
+    });
 
   </script>
 </body>
