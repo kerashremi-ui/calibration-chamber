@@ -11,9 +11,9 @@
       --panel2: #18212b;
       --text: #e9f7f4;
       --muted: #93a8b3;
-      --orange: #ff9d2e;
-      --blue: #38bdf8;
-      --green: #8ef7b6;
+      --red: #ff4b35;
+      --green: #63ff5a;
+      --green-soft: #8ef7b6;
       --danger: #ff5d73;
       --border: rgba(255,255,255,.14);
     }
@@ -24,8 +24,8 @@
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(circle at 15% 20%, rgba(255,157,46,.13), transparent 28%),
-        radial-gradient(circle at 85% 65%, rgba(56,189,248,.12), transparent 30%),
+        radial-gradient(circle at 18% 22%, rgba(255,75,53,.16), transparent 30%),
+        radial-gradient(circle at 82% 60%, rgba(99,255,90,.14), transparent 32%),
         linear-gradient(135deg, #05070a, var(--bg));
       color: var(--text);
       font-family: "Courier New", Courier, monospace;
@@ -63,15 +63,19 @@
     }
 
     .logo {
-      width: 34px;
-      height: 34px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background:
-        linear-gradient(90deg, transparent 44%, rgba(255,255,255,.22) 45%, rgba(255,255,255,.22) 55%, transparent 56%),
-        linear-gradient(0deg, transparent 44%, rgba(255,255,255,.22) 45%, rgba(255,255,255,.22) 55%, transparent 56%),
-        conic-gradient(from 45deg, var(--orange), transparent 30%, var(--blue), transparent 70%, var(--orange));
-      box-shadow: 0 0 22px rgba(255,157,46,.2), 0 0 26px rgba(56,189,248,.18);
       cursor: pointer;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow:
+        0 0 22px rgba(255,75,53,.25),
+        0 0 26px rgba(99,255,90,.22);
+      background:
+        radial-gradient(circle at 35% 50%, var(--red), transparent 24%),
+        radial-gradient(circle at 65% 50%, var(--green), transparent 24%),
+        #05080c;
     }
 
     .status {
@@ -92,29 +96,35 @@
     h1, h2 { margin-top: 0; line-height: 1.15; }
 
     h1 {
-      font-size: clamp(2rem, 6vw, 4.4rem);
+      font-size: clamp(1.75rem, 4.4vw, 3.45rem);
       margin-bottom: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-family: Consolas, "Lucida Console", "Courier New", monospace;
+      text-shadow:
+        0 0 14px rgba(99,255,90,.14),
+        0 0 18px rgba(255,75,53,.10);
     }
 
     h2 {
       font-size: clamp(1.4rem, 3vw, 2rem);
-      color: var(--green);
+      color: var(--green-soft);
     }
 
     p { color: var(--muted); line-height: 1.65; }
 
     .glitch {
       color: var(--green);
-      text-shadow: 0 0 14px rgba(142,247,182,.3);
+      text-shadow: 0 0 14px rgba(99,255,90,.3);
     }
 
     .terminal {
       background: #05080c;
-      border: 1px solid rgba(142,247,182,.28);
+      border: 1px solid rgba(99,255,90,.28);
       border-radius: 16px;
       padding: 18px;
       margin: 18px 0;
-      box-shadow: inset 0 0 30px rgba(142,247,182,.04);
+      box-shadow: inset 0 0 30px rgba(99,255,90,.04);
     }
 
     .terminal strong { color: var(--green); }
@@ -140,19 +150,19 @@
 
     button:hover, button:focus-visible {
       transform: translateY(-1px);
-      border-color: rgba(255,157,46,.65);
-      box-shadow: 0 0 0 3px rgba(255,157,46,.12);
+      border-color: rgba(99,255,90,.65);
+      box-shadow: 0 0 0 3px rgba(99,255,90,.12);
       outline: none;
     }
 
     button.primary {
-      border-color: rgba(255,157,46,.55);
-      background: linear-gradient(180deg, #412815, #1c1510);
+      border-color: rgba(255,75,53,.55);
+      background: linear-gradient(180deg, #411914, #1c1110);
     }
 
     button.blue {
-      border-color: rgba(56,189,248,.55);
-      background: linear-gradient(180deg, #133247, #101923);
+      border-color: rgba(99,255,90,.55);
+      background: linear-gradient(180deg, #173815, #101c10);
     }
 
     .room {
@@ -172,7 +182,7 @@
       cursor: pointer;
     }
 
-    .object:hover { border-color: rgba(56,189,248,.45); }
+    .object:hover { border-color: rgba(99,255,90,.45); }
 
     .object .icon {
       font-size: 2rem;
@@ -194,8 +204,8 @@
     }
 
     .object.solved {
-      border-color: rgba(142,247,182,.58);
-      box-shadow: 0 0 22px rgba(142,247,182,.08);
+      border-color: rgba(99,255,90,.58);
+      box-shadow: 0 0 22px rgba(99,255,90,.08);
     }
 
     .message-box {
@@ -213,8 +223,8 @@
       margin-top: 18px;
       padding: 18px;
       border-radius: 18px;
-      border: 1px solid rgba(255,157,46,.25);
-      background: rgba(255,157,46,.045);
+      border: 1px solid rgba(255,75,53,.25);
+      background: rgba(255,75,53,.045);
     }
 
     .panel-grid {
@@ -260,8 +270,8 @@
     }
 
     .value-card {
-      border: 1px solid rgba(142,247,182,.25);
-      background: rgba(142,247,182,.06);
+      border: 1px solid rgba(99,255,90,.25);
+      background: rgba(99,255,90,.06);
       color: var(--green);
       border-radius: 14px;
       padding: 12px 16px;
@@ -269,8 +279,9 @@
     }
 
     .coin-counter {
-      color: var(--orange);
+      color: var(--red);
       font-weight: bold;
+      text-shadow: 0 0 12px rgba(255,75,53,.25);
     }
 
     .footer-note {
@@ -293,6 +304,7 @@
       .status { text-align: left; }
       .room, .panel-grid { grid-template-columns: 1fr; }
       .object { min-height: auto; }
+      h1 { letter-spacing: .04em; }
     }
   </style>
 </head>
@@ -301,7 +313,7 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="logo" onclick="findCoin('logo')" title="Team_Aperture"></div>
+        <img class="logo" src="logo.png" onclick="findCoin('logo')" alt="Team_Aperture Logo" title="Team_Aperture" />
         <div>TEAM_APERTURE // KALIBRIERUNGSKAMMER</div>
       </div>
       <div>
@@ -422,8 +434,8 @@
           <p class="success">Kammer 01 abgeschlossen.</p>
           <p>Beobachtungsgabe akzeptabel. Misstrauen gegenüber Wandpaneelen: empfohlen.</p>
           <div class="values">
-            <div class="value-card">A = 7</div>
-            <div class="value-card">B = 4</div>
+            <div class="value-card">A = 4</div>
+            <div class="value-card">B = 7</div>
           </div>
           <div class="actions">
             <button class="blue" onclick="showScreen('placeholder')">Weiter zu Kammer 02</button>
@@ -441,8 +453,8 @@
           </p>
         </div>
         <div class="values">
-          <div class="value-card">A = 7</div>
-          <div class="value-card">B = 4</div>
+          <div class="value-card">A = 4</div>
+          <div class="value-card">B = 7</div>
           <div class="value-card">C = ?</div>
           <div class="value-card">D = ?</div>
         </div>
@@ -516,8 +528,8 @@
       const answer = document.getElementById('answerA').value.trim();
       const result = document.getElementById('result');
 
-      if (answer === '7') {
-        setMessage('<span class="success">Korrekt.</span> Das System hat kurz überlegt, ob es Ihnen gratulieren soll. Es hat sich für eine nüchterne Bestätigung entschieden.');
+      if (answer === '4') {
+        setMessage('<span class="success">Korrekt.</span> Paneel 1 lügt. Genau deshalb ist A tatsächlich 4. Das System ist beunruhigt, aber zufrieden.');
         result.style.display = 'block';
         document.querySelectorAll('.object')[2].classList.add('solved');
         result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -534,11 +546,11 @@
       hintBox.style.display = 'block';
 
       if (hintLevel === 1) {
-        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Vergleichen Sie Paneel 1 und Paneel 3. Können beide gleichzeitig sinnvoll sein?';
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Wenn Paneel 1 lügt, ist seine Aussage nicht wahr.';
       } else if (hintLevel === 2) {
-        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Wenn A = 7 wäre, welche Aussagen wären dann wahr?';
+        hintBox.innerHTML = '<strong>Hinweis 2:</strong> Paneel 1 sagt: „A ist nicht 4.“ Wenn das gelogen ist, bleibt nur eine Möglichkeit.';
       } else {
-        hintBox.innerHTML = '<strong>Hinweis 3:</strong> Paneel 2 ist das hilfreiche Paneel. Die gesuchte Zahl ist 7.';
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> A ist 4. Dadurch ist nur Paneel 3 wahr.';
       }
     }
   </script>
