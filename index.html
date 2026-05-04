@@ -1480,7 +1480,7 @@
     <header class="topbar">
       <div class="brand">
         <img class="logo" src="logo.png" onclick="findCoin('logo')" alt="Team_Aperture Logo" title="Team_Aperture" />
-        <div class="brand-code">GC-----</div>
+        <div class="brand-code">GCBPAMN</div>
       </div>
       <div>
         <div class="status" id="status">Status: Testsubjekt eingeschlossen</div>
@@ -1663,7 +1663,7 @@
                 <span class="screw tl"></span><span class="screw bl"></span><span class="screw br"></span>
                 <span class="screw-hole" title="fehlende Schraube" onclick="event.stopPropagation(); findCoin('screwHole');"></span>
                 <span class="node-title">Knoten B</span>
-                <span class="node-sub">oben rechts // leicht beleidigt</span>
+                <span class="node-sub">oben rechts // leicht beschädigt</span>
                 <div class="slot" id="slot-B"></div>
               </div>
 
@@ -1951,11 +1951,13 @@
               als wäre das alles vollkommen normal gewesen.
             </p>
             <div class="coordinate-output">
-              N 49° 0X.XXX<br>
-              E 012° 0X.XXX
+              N 49° 00.742<br>
+              E 012° 06.994
+              Hint: Vermisstes Objekt aus Kammer 02.
+              Spoilerbilder: https://imgur.com/a/wOAmaxV
             </div>
             <p>
-              Platzhalter-Koordinaten aktiv. Finale Werte können später eingesetzt werden.
+             
             </p>
           </div>
 
@@ -2108,9 +2110,11 @@
           </p>
 
           <div class="coordinate-output">
-            BONUS-KOORDINATEN PLATZHALTER<br>
-            N 49° XX.XXX<br>
-            E 012° XX.XXX
+            BONUS-KOORDINATEN<br>
+            N 49° 00.643<br>
+            E 012° 07.118
+            Hint: Am Pfosten.
+            Spoilerbild: https://imgur.com/a/SykRjDS
           </div>
 
           <div class="core-credits">
@@ -2161,7 +2165,7 @@
       audio.preload = 'auto';
       if (key === 'ambience') {
         audio.loop = true;
-        audio.volume = 0.22;
+        audio.volume = 0.4;
       } else {
         audio.volume = key === 'coin' ? 0.75 : 0.55;
       }
@@ -2172,7 +2176,7 @@
       if (audioUnlocked) return;
       audioUnlocked = true;
       const status = document.getElementById('soundStatus');
-      if (status) status.textContent = 'Audio bereit. Dateien können später ergänzt werden.';
+      if (status) status.textContent = 'Audio bereit.';
     }
 
     function playSound(name) {
@@ -2312,7 +2316,7 @@
       }
 
       if (foundCoins.size === 7) {
-        alert('Bonusarchiv freigeschaltet. In einer späteren Version wartet hier ein geheimes Extra.');
+        alert('Bonusprotokoll freigeschaltet.');
       }
     }
 
@@ -2344,7 +2348,7 @@
       const result = document.getElementById('result');
 
       if (answer === '4') {
-        setMessage('<span class="success">Korrekt.</span> Paneel 1 lügt. Genau deshalb ist A tatsächlich 4. Das System ist beunruhigt, aber zufrieden.');
+        setMessage('<span class="success">Korrekt.</span> Paneel 1 lügt. Genau deshalb ist A tatsächlich 4. Macht zwar keinen Sinn, aber der System ist zufrieden.');
         result.style.display = 'block';
         document.querySelectorAll('.object')[2].classList.add('solved');
         result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2361,11 +2365,11 @@
       hintBox.style.display = 'block';
 
       if (hintLevel === 1) {
-        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Wenn Paneel 1 lügt, ist seine Aussage nicht wahr.';
+        hintBox.innerHTML = '<strong>Hinweis 1:</strong> Wenn Paneel 1 lügt, ist seine Aussage wahrscheinlich nicht wahr.';
       } else if (hintLevel === 2) {
         hintBox.innerHTML = '<strong>Hinweis 2:</strong> Paneel 1 sagt: „A ist nicht 4.“ Wenn das gelogen ist, bleibt nur eine Möglichkeit.';
       } else {
-        hintBox.innerHTML = '<strong>Hinweis 3:</strong> A ist 4. Dadurch ist nur Paneel 3 wahr.';
+        hintBox.innerHTML = '<strong>Hinweis 3:</strong> A ist 4.';
       }
     }
 
